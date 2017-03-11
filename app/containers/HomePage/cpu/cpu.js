@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 
-import {PIPELINE_INITVAL, PIPELINE_ENDVAL} from '../constants'
+import { INITVAL, ENDVAL } from '../constants'
 
 /*
  * @param {instructions} - instructions in format:
@@ -11,65 +11,42 @@ import {PIPELINE_INITVAL, PIPELINE_ENDVAL} from '../constants'
  * @return 
  */
 export default function cpu(instructions){
-	let pipe = Pipeline(instructions)
 	const registers = Registers()
-	registers.data_reg.R1.setValue(9)
-	console.log(registers.data_reg.R1.getValue())
-	const attList = []
+	const pipeline = Pipeline()
+	let allStates = []
 
-	attList.push(Immutable.fromJS(pipe.attrs))
-	do {
-		pipe.nextCycle()
-		attList.push(Immutable.fromJS(pipe.attrs))
-	} while(pipe.isEnd() === false)
-	//print attList
-	attList.forEach((element) => {
-		console.log("cpu", element.toJS())
-	})
-	return attList
+	while (nextStep(instructions, registers, pipeline)) {
+		allStates.push(Immutable.fromJS({
+			pipeline: pipeline.pipeline_state, 
+			registers
+			}
+		))
+	}
+	// allStates.forEach((element) => {
+		// console.log("cpu", element.toJS())
+	// })
+	return allStates
 }
 
-/* Object Pipeline for each call nextCycle() will update attrs object which
+/* Object Pipeline for each call nextCycle() will update pipeline_state object which
  * is a represenation of pipeline state
  * @param {instructions_len} length of instrucion array from parser
  * @return new Object with methods & attibutes
  */
-function Pipeline(instructions){
-	let end = false
-	let index_of_next_instruction = 0
-	let attrs = {
+function Pipeline(){
+	let pipeline_state = {
 		// fetch, decode, execute, memory access, write back
-		pipe: [PIPELINE_INITVAL, PIPELINE_INITVAL, PIPELINE_INITVAL, PIPELINE_INITVAL, PIPELINE_INITVAL]
-	}
-
-	let moveInstrucionIndexes = () => {
-		if(index_of_next_instruction >= (instructions.length)){
-			// pipeline hits end
-			rotateInstructionIn(PIPELINE_ENDVAL)
-			if (attrs.pipe.every((pipe_instuction) => pipe_instuction === PIPELINE_ENDVAL))
-				end = true
-		}
-		else {
-			rotateInstructionIn(instructions[index_of_next_instruction])
-			index_of_next_instruction++
-		}
-	}
-	
-	let rotateInstructionIn = (i_index) => {
-		attrs.pipe.pop()
-		attrs.pipe.unshift(i_index)
+		pipe: [INITVAL, INITVAL, INITVAL, INITVAL, INITVAL]
 	}
 	return {
 		init(){
-			attrs.pipe.fill(PIPELINE_INITVAL)
+			pipeline_state.pipe.fill(INITVAL)
 		},
-		nextCycle(){
-			moveInstrucionIndexes()
+		pushInstructionIn(instruction){
+			pipeline_state.pipe.pop()
+			pipeline_state.pipe.unshift(instruction)
 		},
-		isEnd(){
-			return end
-		},
-		attrs
+		pipeline_state
 	}
 }
 
@@ -87,15 +64,41 @@ function Registers(){
 }
 
 function Register(name){
-	let actual_value = null
+	let actual_value = 0 // init value of register
 	return {
 		name,
 		setValue(value){
 			actual_value = value
 			return actual_value
 		},
+		alterValue(fn){
+			actual_value = fn(actual_value)
+			return actual_value
+		},
 		getValue(){
 			return actual_value
 		}
 	}
+}
+
+/*
+ * move
+ * execute
+ */
+function nextStep(instructions, registers, pipeline){
+	// PC++
+	let PC = registers.state_reg.PC.getValue()
+	// PC max val is last line(instruction)
+	if(PC >= instructions.length) {
+		registers.state_reg.PC.setValue(PC-1)
+		pipeline.pushInstructionIn(ENDVAL)
+		console.log("pushing ENDVAL in pipeline")
+		if (pipeline.pipeline_state.pipe.every((instruction) => instruction === ENDVAL))
+			return false // pipeline is empty
+	}
+	else {
+		pipeline.pushInstructionIn(instructions[PC])
+		console.log(`now going to execute ${instructions[PC].instruction} with params: ${instructions[PC].params}`)
+	}
+	return true
 }

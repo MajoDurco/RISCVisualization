@@ -16,6 +16,7 @@ export default function getInstructions(text){
 		console.log("valid?", verifyInstructions(parsed_instructions)) 
 		if(!verifyInstructions(parsed_instructions))
 			throw ERR_VALID_INSTRUCTION
+		parsed_instructions.unshift('') // add empty element to the beginning to have each instruction on the same index as on line in editor
 		return parsed_instructions
 }
 

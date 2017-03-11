@@ -1,8 +1,8 @@
 import { fromJS, toJS } from 'immutable'
 
-import { UPDATE_PIPE, PIPELINE_INITVAL } from './constants'
+import { UPDATE_PIPE, INITVAL } from './constants'
 
-const initialState = fromJS({pipe: [PIPELINE_INITVAL, PIPELINE_INITVAL, PIPELINE_INITVAL, PIPELINE_INITVAL,  PIPELINE_INITVAL]})
+const initialState = fromJS({pipe: [INITVAL, INITVAL, INITVAL, INITVAL,  INITVAL]})
 
 function homePageReducer(state = initialState, action) {
   switch (action.type) {

@@ -23,10 +23,10 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 		try{
 			let processed_instructons = getInstructions(text)
 			this.arrState = cpu(processed_instructons)
-			this.arrStateActiveIndex = 0
-			this.props.updatePipeline(this.arrState[this.arrStateActiveIndex])
-			console.log("arrstate", this.arrState)
-			console.log("arrstate index", this.arrStateActiveIndex)
+			// this.arrStateActiveIndex = 0
+			// this.props.updatePipeline(this.arrState[this.arrStateActiveIndex])
+			// console.log("arrstate", this.arrState)
+			// console.log("arrstate index", this.arrStateActiveIndex)
 		} 
 		catch (err){
 			console.log(err)
@@ -43,7 +43,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 	}
 
   render() {
-		console.log("HomePage props", this.props)
+		// console.log("HomePage props", this.props)
 		const pipeState = this.props.pipeState.toJS()
     return (
 			<Row divisions={6} debug={true}>
@@ -52,7 +52,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 					<button onClick={() => {this.nextState()}}>NextState</button>
 				</Column>
 				<Column lg={4}>
-					<Pipeline pipe_state={pipeState}/>
+					<Pipeline pipe_state={pipeState} />
 				</Column>
 			</Row>
     );

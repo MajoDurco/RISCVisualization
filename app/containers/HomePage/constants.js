@@ -14,5 +14,5 @@ export const INSTRUCTIONS = {
 export const ERR_VALID_INSTRUCTION = "Instructions aren't valid"
 export const ERR_NO_INSTRUCTIONS = "No instructions found"
 
-export const PIPELINE_INITVAL = "INIT"
-export const PIPELINE_ENDVAL = "END"
+export const INITVAL = "INIT"
+export const ENDVAL = "END"
