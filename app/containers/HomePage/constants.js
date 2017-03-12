@@ -11,6 +11,10 @@ export const INSTRUCTIONS = {
 	JMP   : 1, // JMP {REG/LINE}
 }
 
+export const REGISTER_REGEX = /^R(\d{1,2})$/
+
+export const DATA_REGS = 16 // number of data registers
+
 export const ERR_VALID_INSTRUCTION = "Instructions aren't valid"
 export const ERR_NO_INSTRUCTIONS = "No instructions found"
 

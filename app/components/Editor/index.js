@@ -8,7 +8,7 @@ var TEXT = ""
 
 class Editor extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
-		const defVal = `add 1 2 3 ${'\n'}`
+		const defVal = `add R1 R2 R3 ${'\n'}`
     return (
 			<div>
 				<AceEditor 

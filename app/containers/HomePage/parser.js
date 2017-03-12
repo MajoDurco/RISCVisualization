@@ -3,6 +3,8 @@ import { INSTRUCTIONS,
 	ERR_NO_INSTRUCTIONS
 } from './constants'
 
+import instruction_checker from './cpu/instructions/index'
+
 /*
  * @param {text} instrucions from editor
  * @exception
@@ -75,8 +77,10 @@ export function verifyInstructions(instructions, rules=INSTRUCTIONS){
 	return instructions.every((instr) => {
 		const instruction_name = instr.instruction.toUpperCase()
 		if( instruction_name in rules){
-			if(instr.params.length === rules[instruction_name])
-				return true
+			if(instr.params.length === rules[instruction_name]) {
+				if(instruction_checker[instruction_name].checkParams(instr.params))
+					return true
+			}
 		}
 		return false
 	})
