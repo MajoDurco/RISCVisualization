@@ -4,12 +4,8 @@ import { INITVAL, ENDVAL } from '../constants'
 import instCode from './instructions/index'
 
 /*
- * @param {instructions} - instructions in format:
- * 	[
- * 	 {instruction: "ADD", params: ["r1", "r2", "r3"]},
- * 	 ...
- * 	]
- * @return 
+ * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
+ * @return {Array} - contains all states for redux
  */
 export default function cpu(instructions){
 	const registers = Registers()
@@ -25,6 +21,7 @@ export default function cpu(instructions){
 			registers
 			}
 		))
+		console.log(" -------- CYCLE ---------")
 	}
 	allStates.push(Immutable.fromJS({ pipeline: pipeline.pipeline_state, registers }))// save end state
 	allStates.forEach((element, index) => {
@@ -34,10 +31,10 @@ export default function cpu(instructions){
 	return allStates
 }
 
-/* Object Pipeline for each call nextCycle() will update pipeline_state object which
- * is a represenation of pipeline state
- * @param {instructions_len} length of instrucion array from parser
- * @return new Object with methods & attibutes
+/*
+ * @desc - Factory function for pipeline which for each call nextCycle() will update pipeline_state object 
+ * which is a represenation of pipeline actual state
+ * @return {Object} - object of pipeline
  */
 function Pipeline(){
 	let pipeline_state = {
@@ -56,6 +53,10 @@ function Pipeline(){
 	}
 }
 
+/*
+ * @desc - takes care of creating all needed registers
+ * @return {Object} - return all registers(date_regs, state_regs) in one object 
+ */
 function Registers(){
 	const data_reg = {
 		R1 : Register("R1"),
@@ -71,6 +72,11 @@ function Registers(){
 	}
 }
 
+/*
+ * @desc - Factory function for register creation
+ * @param {String} name - name of creating register
+ * @return {Object} - new register
+ */
 function Register(name){
 	let actual_value = {value: 0}// init value of register
 	return {
@@ -91,44 +97,55 @@ function Register(name){
 }
 
 /*
- * move
- * execute
+ * @desc - call executon of each instruction in pipeline, after that increment PC which points on next instruction then push it into pipeline
+ * TODO push in the beginning of execution?
+ * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
+ * represents parsed instructions from editor, index === editor line
+ * @param {Object} registers - ref to Registers object
+ * @param {Object} pipeline - ref to Pipeline object
+ * @return {Boolean} - indicator of the end of calcutation, false === end
  */
 function nextStep(instructions, registers, pipeline){
+	let should_inc_PC = true
+	// execute instruction in pipeline
+	pipeline.pipeline_state.pipe.forEach((instruction, index) => {
+		if(instruction !== INITVAL && instruction !== ENDVAL){
+			const inst_functions = instCode[instruction.instruction]
+			const functions = [inst_functions.fetch, inst_functions.decode, inst_functions.execute, inst_functions.memaccess, inst_functions.writeback]
+			if (index === 4) { // writeback
+				try {
+					functions[index](instruction, registers)
+					if(instruction.instruction === "JMP"){
+						should_inc_PC = false
+						pipeline.init()
+					}
+				}
+				catch (err){ // jumping on wrong line
+					console.log(err)
+				}
+			}
+			else {
+				functions[index](instruction, registers)
+			}
+		}
+	})
 	// PC++
-	let PC = registers.state_reg.PC.alterValue((value) => ++value)
+	let PC
+	if(should_inc_PC)
+		PC = registers.state_reg.PC.alterValue((value) => ++value)
+	else
+		PC = registers.state_reg.PC.getValue()
 	// PC max val is last line(instruction)
+	// move next instruction into the pipeline
 	if(PC >= instructions.length) {
 		registers.state_reg.PC.setValue(PC-1)
 		pipeline.pushInstructionIn(ENDVAL)
-		console.log("pushing ENDVAL in pipeline")
 		if (pipeline.pipeline_state.pipe.every((instruction) => instruction === ENDVAL))
 			return false // pipeline is empty
 	}
 	else {
 		pipeline.pushInstructionIn(instructions[PC])
-		console.log(`now going to execute ${instructions[PC].instruction} with params: ${instructions[PC].params}`)
+		console.log(`${instructions[PC].instruction} pushed into pipeline with params: ${instructions[PC].params}`)
 	}
-	pipeline.pipeline_state.pipe.forEach((instruction, index) => {
-		if(instruction !== INITVAL && instruction !== ENDVAL){
-			switch (index) {
-				case 0:
-					instCode[instruction.instruction].fetch()
-					break
-				case 1:
-					instCode[instruction.instruction].decode()
-					break
-				case 2:
-					instCode[instruction.instruction].execute(instruction)
-					break
-				case 3:
-					instCode[instruction.instruction].memaccess()
-					break
-				case 4:
-					instCode[instruction.instruction].writeback(instruction, registers)
-					break
-			}
-		}
-	})
 	return true
 }

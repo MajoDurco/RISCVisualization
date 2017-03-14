@@ -1,5 +1,9 @@
 import { REGISTER_REGEX, DATA_REGS } from '../../constants'
 
+/*
+ * @param {String[]} params - array of instruction parameters
+ * @return {Boolean} - tells if params are valid(true)
+ */
 export function checkParams(params){
 	if(params.every((param) => {
 			const match = param.match(REGISTER_REGEX)
@@ -28,12 +32,11 @@ export function memaccess(){
 	console.log("memaccess add")
 }
 export function writeback(instruction, registers){
-	console.log("writeback add")
 	const dest_reg = registers.data_reg[instruction.params[0]]
 	const first_reg = registers.data_reg[instruction.params[1]]
 	const second_reg = registers.data_reg[instruction.params[2]]
 	const result_value = first_reg.getValue() + second_reg.getValue()
-	console.log("writeback result", result_value)
+	console.log("writeback add result", result_value)
 	dest_reg.setValue(result_value)
 }
 
