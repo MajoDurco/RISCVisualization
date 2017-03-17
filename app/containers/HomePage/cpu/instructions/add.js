@@ -32,12 +32,10 @@ export function memaccess(){
 	console.log("memaccess add")
 }
 export function writeback(instruction, registers){
-	const dest_reg = registers.data_reg[instruction.params[0]]
-	const first_reg = registers.data_reg[instruction.params[1]]
-	const second_reg = registers.data_reg[instruction.params[2]]
-	const result_value = first_reg.getValue() + second_reg.getValue()
-	console.log("writeback add result", result_value)
-	dest_reg.setValue(result_value)
+	const first_reg = registers[instruction.params[1]]
+	const second_reg = registers[instruction.params[2]]
+	registers[instruction.params[0]] = first_reg + second_reg
+	console.log("writeback add result", registers[instruction.params[0]])
 }
 
 export default {

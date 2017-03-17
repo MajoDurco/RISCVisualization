@@ -1,4 +1,4 @@
-export const UPDATE_PIPE = 'app/HomePage/UPDATE_PIPE'
+export const UPDATE_CPU_STATE = 'app/HomePage/UPDATE_CPU_STATE'
 
 export const INSTRUCTIONS = { 
 	ADD   : 3, // ADD {REG}{REG}{REG}

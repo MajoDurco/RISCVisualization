@@ -1,8 +1,8 @@
-import { UPDATE_PIPE } from './constants'
+import { UPDATE_CPU_STATE } from './constants'
 
-export function updatePipeline(pipe_state){
+export function updateCpuState(cpu_state){
 	return {
-		type: UPDATE_PIPE,
-		pipe: pipe_state
+		type: UPDATE_CPU_STATE,
+		cpu_state: cpu_state,
 	}
 }

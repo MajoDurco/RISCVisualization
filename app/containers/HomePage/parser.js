@@ -5,12 +5,6 @@ import { INSTRUCTIONS,
 
 import instruction_checker from './cpu/instructions/index'
 
-/*
- * @param {text} instrucions from editor
- * @exception
- * @return 
- *  parsed_instructions
- */
 export default function getInstructions(text){
 		const parsed_instructions = parse(text)
 		if (parsed_instructions === null)
@@ -24,15 +18,10 @@ export default function getInstructions(text){
 
 /*
  * @param {text} text from ace editor
- * @return :
- * 	 null when {text} is empty,
- *	 parsed instruction in format:
- *		[{
- *			instruction: NAME,
- *			params: [PARAM1, PARAM2]
- *		 },
- *		...]
- *		
+ * @return {null/instructions}
+ * 	 null - param text is empty,
+ * 	 insttructions - Array of instructions
+ *  {instruction: String, params: String[]}[] 
  */
 export function parse(text){
 	const instruction_pos = 0
@@ -69,9 +58,9 @@ export function parse(text){
 }	
 
 /*
- * @param {instructions}
- * @return 
- * 	bool
+ * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
+ * @param {{String: Number}} rules - rules for all instructions
+ * @return {Boolean} instructions are valid(true)
  */
 export function verifyInstructions(instructions, rules=INSTRUCTIONS){
 	return instructions.every((instr) => {
@@ -87,10 +76,9 @@ export function verifyInstructions(instructions, rules=INSTRUCTIONS){
 }
 
 /*
- * @param {str} - controled string
- * @excption
- * @return 
- * 	bool
+ * @param {String} - controled string
+ * @throws {TypeError} - if params is not string
+ * @return {Boolean}
  */
 export function isEmpty(str){
 	if (typeof(str) !== 'string')

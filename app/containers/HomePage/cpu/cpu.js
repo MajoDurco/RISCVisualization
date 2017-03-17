@@ -12,18 +12,24 @@ export default function cpu(instructions){
 	const pipeline = Pipeline()
 	let allStates = []
 
-	registers.data_reg.R2.setValue(2)
-	registers.data_reg.R3.setValue(4)
-	allStates.push(Immutable.fromJS({ pipeline: pipeline.pipeline_state, registers }))// save init state
+	registers.R2 = 2
+	registers.R3 = 4
+	allStates.push(Immutable.fromJS({ 
+		pipe: pipeline.pipeline_state.pipe,
+		registers 
+	}))// save init state
 	while (nextStep(instructions, registers, pipeline)) {
 		allStates.push(Immutable.fromJS({
-			pipeline: pipeline.pipeline_state, 
+			pipe: pipeline.pipeline_state.pipe, 
 			registers
 			}
 		))
 		console.log(" -------- CYCLE ---------")
 	}
-	allStates.push(Immutable.fromJS({ pipeline: pipeline.pipeline_state, registers }))// save end state
+	allStates.push(Immutable.fromJS({ 
+		pipe: pipeline.pipeline_state.pipe,
+		registers 
+	}))// save end state
 	allStates.forEach((element, index) => {
 		console.log("state index", index)
 		console.log("state array", element.toJS())
@@ -58,18 +64,13 @@ function Pipeline(){
  * @return {Object} - return all registers(date_regs, state_regs) in one object 
  */
 function Registers(){
-	const data_reg = {
-		R1 : Register("R1"),
-		R2 : Register("R2"),
-		R3 : Register("R3")	
+	let registers = {
+		R1: 0,
+		R2: 0,
+		R3: 0,
+		PC: 0,
 	}
-	const state_reg = {
-		PC: Register("PC")
-	}
-	return {
-		data_reg,
-		state_reg
-	}
+	return registers
 }
 
 /*
@@ -77,24 +78,24 @@ function Registers(){
  * @param {String} name - name of creating register
  * @return {Object} - new register
  */
-function Register(name){
-	let actual_value = {value: 0}// init value of register
-	return {
-		name,
-		actual_value,
-		setValue(value){
-			actual_value.value = value
-			return actual_value.value
-		},
-		alterValue(fn){
-			actual_value.value = fn(actual_value.value)
-			return actual_value.value
-		},
-		getValue(){
-			return actual_value.value
-		}
-	}
-}
+// function Register(name){
+	// let actual_value = {value: 0}// init value of register
+	// return {
+		// name,
+		// actual_value,
+		// setValue(value){
+			// actual_value.value = value
+			// return actual_value.value
+		// },
+		// alterValue(fn){
+			// actual_value.value = fn(actual_value.value)
+			// return actual_value.value
+		// },
+		// getValue(){
+			// return actual_value.value
+		// }
+	// }
+// }
 
 /*
  * @desc - call executon of each instruction in pipeline, after that increment PC which points on next instruction then push it into pipeline
@@ -113,39 +114,35 @@ function nextStep(instructions, registers, pipeline){
 			const inst_functions = instCode[instruction.instruction]
 			const functions = [inst_functions.fetch, inst_functions.decode, inst_functions.execute, inst_functions.memaccess, inst_functions.writeback]
 			if (index === 4) { // writeback
-				try {
-					functions[index](instruction, registers)
-					if(instruction.instruction === "JMP"){
-						should_inc_PC = false
-						pipeline.init()
-					}
-				}
-				catch (err){ // jumping on wrong line
-					console.log(err)
-				}
-			}
-			else {
 				functions[index](instruction, registers)
+				if(instruction.instruction === "JMP"){
+					//check if jump destination is correct
+					if(register.PC <= (instructions.length-1) && register.PC <= 0){
+						console.log("jump on wrong destination") // TODO make exception on this or something
+						return false
+					}
+					should_inc_PC = false
+					pipeline.init()
+				}
 			}
+			else
+				functions[index](instruction, registers)
 		}
 	})
 	// PC++
-	let PC
 	if(should_inc_PC)
-		PC = registers.state_reg.PC.alterValue((value) => ++value)
-	else
-		PC = registers.state_reg.PC.getValue()
+		registers.PC += 1 
 	// PC max val is last line(instruction)
 	// move next instruction into the pipeline
-	if(PC >= instructions.length) {
-		registers.state_reg.PC.setValue(PC-1)
+	if(registers.PC >= instructions.length) {
+		registers.PC -= 1
 		pipeline.pushInstructionIn(ENDVAL)
 		if (pipeline.pipeline_state.pipe.every((instruction) => instruction === ENDVAL))
 			return false // pipeline is empty
 	}
 	else {
-		pipeline.pushInstructionIn(instructions[PC])
-		console.log(`${instructions[PC].instruction} pushed into pipeline with params: ${instructions[PC].params}`)
+		pipeline.pushInstructionIn(instructions[registers.PC])
+		console.log(`${instructions[registers.PC].instruction} pushed into pipeline with params: ${instructions[registers.PC].params}`)
 	}
 	return true
 }
