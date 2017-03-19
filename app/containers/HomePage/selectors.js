@@ -8,12 +8,27 @@ export const baseHomeSelector = createSelector(
 	(home_page) => home_page
 )
 
-export const pipeSelector = createSelector(
+export const cpuSelector = createSelector(
 	homeSelector,
-	(home_page) => home_page.get('pipe')
+	(home_page) => home_page.get('cpu')
+)
+
+export const pipeSelector = createSelector(
+	cpuSelector,
+	(cpu) => cpu.get('pipe')
 )
 
 export const regSelector = createSelector(
+	cpuSelector,
+	(cpu) => cpu.get('registers')
+)
+
+export const animationSelector = createSelector(
 	homeSelector,
-	(home_page) => home_page.get('registers')
+	(home) => home.get('animation')
+)
+
+export const animationOpen= createSelector(
+	animationSelector,
+	(animation) => animation.get('open')
 )

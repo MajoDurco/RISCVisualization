@@ -7,6 +7,7 @@ import invariant from 'invariant';
 import warning from 'warning';
 import createReducer from 'reducers';
 
+import epic$ from '../epic'
 /**
  * Validate the shape of redux store
  */
@@ -66,6 +67,22 @@ export function injectAsyncSagas(store, isValid) {
 }
 
 /**
+ * Inject an asynchronously loaded Epic
+ */
+export function injectAsyncEpic(store, isValid) {
+  return function injectEpic(epic) {
+    if (!isValid) checkStore(store);
+
+		invariant(
+		isFunction(epic),
+			'(app/utils...) injectAsyncEpic: Expected `epic` to be an epic function' 
+		);
+
+		epic$.next(epic)
+  };
+}
+
+/**
  * Helper for creating injectors
  */
 export function getAsyncInjectors(store) {
@@ -74,5 +91,6 @@ export function getAsyncInjectors(store) {
   return {
     injectReducer: injectAsyncReducer(store, true),
     injectSagas: injectAsyncSagas(store, true),
+    injectEpic: injectAsyncEpic(store, true),
   };
 }

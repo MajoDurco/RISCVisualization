@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 
 import { Row, Column } from 'hedron'
 
@@ -19,7 +19,7 @@ class Pipeline extends React.PureComponent {
 }
 
 Pipeline.propTypes = {
-
+ pipe_state: React.PropTypes.array.isRequired
 };
 
 export default Pipeline;

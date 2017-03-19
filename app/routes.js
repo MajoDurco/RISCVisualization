@@ -14,7 +14,7 @@ const loadModule = (cb) => (componentModule) => {
 
 export default function createRoutes(store) {
   // Create reusable async injectors using getAsyncInjectors factory
-  const { injectReducer, injectSagas } = getAsyncInjectors(store); // eslint-disable-line no-unused-vars
+  const { injectReducer, injectSagas, injectEpic } = getAsyncInjectors(store); // eslint-disable-line no-unused-vars
 
   return [
     {
@@ -24,13 +24,15 @@ export default function createRoutes(store) {
         const importModules = Promise.all([
 					import('containers/HomePage/reducers'),
           import('containers/HomePage'),
+					import('containers/HomePage/epic'),
         ]);
 
         const renderRoute = loadModule(cb);
 
-        importModules.then(([reducer, component]) => {
+        importModules.then(([reducer, component, epic]) => {
 					injectReducer('home', reducer.default)
-          renderRoute(component);
+          renderRoute(component)
+					injectEpic(epic.default)
         });
 
         importModules.catch(errorLoading);
