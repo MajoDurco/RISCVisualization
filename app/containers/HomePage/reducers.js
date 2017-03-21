@@ -1,7 +1,11 @@
 import { fromJS } from 'immutable'
 import { combineReducers } from 'redux-immutable'
 
-import { UPDATE_CPU_STATE, INITVAL } from './constants'
+import { UPDATE_CPU_STATE,
+	INITVAL,
+  ERR_INSTR_NOTIF_VISIBLE,
+  ERR_INSTR_NOTIF_HIDDEN,
+	} from './constants'
 
 const initial_cpu_state = fromJS({
 	pipe: [INITVAL, INITVAL, INITVAL, INITVAL, INITVAL],
@@ -22,6 +26,21 @@ function cpuReducer(state = initial_cpu_state, action) {
   }
 }
 
+const init_editor_state = fromJS({
+	errors: []
+})
+
+function editorReducer(state = init_editor_state, action){
+	switch (action.type){
+		case ERR_INSTR_NOTIF_VISIBLE:
+			return state.set('errors', action.errors)
+		case ERR_INSTR_NOTIF_HIDDEN:
+			return init_editor_state
+		default: 
+			return state
+	}
+} 
+
 function animation(state = fromJS({open: false}), action){
 	switch (action.type) {
 		case 'ANIMATE':
@@ -35,6 +54,7 @@ function animation(state = fromJS({open: false}), action){
 
 const home_page_reducers = combineReducers({ 
 	cpu: cpuReducer,
+	editor: editorReducer,
 	animation
 	})
 

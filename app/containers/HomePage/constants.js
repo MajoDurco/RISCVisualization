@@ -1,4 +1,6 @@
 export const UPDATE_CPU_STATE = 'app/HomePage/UPDATE_CPU_STATE'
+export const ERR_INSTR_NOTIF_VISIBLE = 'app/HomePage/ERR_INSTR_NOTIF_VISIBLE'
+export const ERR_INSTR_NOTIF_HIDDEN = 'app/HomePage/ERR_INSTR_NOTIF_HIDDEN'
 
 export const INSTRUCTIONS = { 
 	ADD   : 3, // ADD {REG}{REG}{REG}
@@ -14,9 +16,6 @@ export const INSTRUCTIONS = {
 export const REGISTER_REGEX = /^R(\d{1,2})$/
 
 export const DATA_REGS = 16 // number of data registers
-
-export const ERR_VALID_INSTRUCTION = "Instructions aren't valid"
-export const ERR_NO_INSTRUCTIONS = "No instructions found"
 
 export const INITVAL = "INIT"
 export const ENDVAL = "END"

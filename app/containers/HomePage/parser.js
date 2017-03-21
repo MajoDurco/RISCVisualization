@@ -1,17 +1,13 @@
-import { INSTRUCTIONS,
-	ERR_VALID_INSTRUCTION,
-	ERR_NO_INSTRUCTIONS
-} from './constants'
-
-import instruction_checker from './cpu/instructions/index'
+import { INSTRUCTIONS } from './constants'
+import spec_instructions from './cpu/instructions/index'
 
 export default function getInstructions(text){
 		const parsed_instructions = parse(text)
 		if (parsed_instructions === null)
-			throw ERR_NO_INSTRUCTIONS
-		console.log("valid?", verifyInstructions(parsed_instructions)) 
-		if(!verifyInstructions(parsed_instructions))
-			throw ERR_VALID_INSTRUCTION
+			return {valid: false, annotations:[{text: `Insert Instructions`}]}
+		let verify = verifyInstructions(parsed_instructions)
+		if(!verify.valid)
+			return verify
 		parsed_instructions.unshift('') // add empty element to the beginning to have each instruction on the same index as on line in editor
 		return parsed_instructions
 }
@@ -60,19 +56,29 @@ export function parse(text){
 /*
  * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
  * @param {{String: Number}} rules - rules for all instructions
- * @return {Boolean} instructions are valid(true)
+ * @return {{valid: Boolean, annotations: Array[]}}
  */
 export function verifyInstructions(instructions, rules=INSTRUCTIONS){
-	return instructions.every((instr) => {
+	let annotations = []
+	instructions.forEach((instr, line) => {
 		const instruction_name = instr.instruction.toUpperCase()
-		if( instruction_name in rules){
+		if(instruction_name in rules){ 
 			if(instr.params.length === rules[instruction_name]) {
-				if(instruction_checker[instruction_name].checkParams(instr.params))
-					return true
+				if(!(spec_instructions[instruction_name].checkParams(instr.params))){ // wrong num. of params
+					annotations.push({line: line+1, text: `Wrong params for ${instruction_name}`})
+				}
+			}
+			else { // wrong format of parameter
+				annotations.push({line: line+1, text: `${instruction_name} uses ${rules[instruction_name]} params not ${instr.params.length}`})
 			}
 		}
-		return false
+		else { // unknown instuction
+			annotations.push({line: line+1, text: "Unknown Instruction"})
+		}
 	})
+	if (annotations.length === 0)
+		return {valid: true, annotations}
+	return {valid: false, annotations}
 }
 
 /*

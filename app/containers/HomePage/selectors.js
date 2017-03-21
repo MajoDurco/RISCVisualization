@@ -3,6 +3,7 @@ import { createSelector } from 'reselect'
 const homeSelector = (state) => state.get('home')
 // 'home' is defined in ~(projectHome)/app/routes.js in injectingReducer
 
+// CPU
 export const baseHomeSelector = createSelector(
 	homeSelector,
 	(home_page) => home_page
@@ -23,6 +24,13 @@ export const regSelector = createSelector(
 	(cpu) => cpu.get('registers')
 )
 
+// EDITOR
+export const editorSelector = createSelector(
+	homeSelector,
+	(home) => home.get('editor')
+)
+
+// ANIMATION
 export const animationSelector = createSelector(
 	homeSelector,
 	(home) => home.get('animation')

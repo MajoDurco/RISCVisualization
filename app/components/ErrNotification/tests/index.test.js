@@ -1,9 +1,9 @@
 // import React from 'react';
 // import { shallow } from 'enzyme';
 
-// import EditorWrapper from '../index';
+// import ErrNotification from '../index';
 
-describe('<EditorWrapper />', () => {
+describe('<ErrNotification />', () => {
   it('Expect to have unit tests specified', () => {
     expect(true).toEqual(false);
   });
