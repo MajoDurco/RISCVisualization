@@ -65,11 +65,11 @@ export function verifyInstructions(instructions, rules=INSTRUCTIONS){
 		if(instruction_name in rules){ 
 			if(instr.params.length === rules[instruction_name]) {
 				if(!(spec_instructions[instruction_name].checkParams(instr.params))){ // wrong num. of params
-					annotations.push({line: line+1, text: `Wrong params for ${instruction_name}`})
+					annotations.push({line: line+1, text: `Wrong params for ${instruction_name} instruction`})
 				}
 			}
 			else { // wrong format of parameter
-				annotations.push({line: line+1, text: `${instruction_name} uses ${rules[instruction_name]} params not ${instr.params.length}`})
+				annotations.push({line: line+1, text: `Instruction ${instruction_name} uses ${rules[instruction_name]} params not ${instr.params.length}`})
 			}
 		}
 		else { // unknown instuction
