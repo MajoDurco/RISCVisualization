@@ -7,6 +7,16 @@ import {
 } from 'material-ui/Stepper'
 
 class StateLine extends React.Component {
+
+	renderText(){
+		const messages = this.props.ui.state_line_msg.map((msg, index) => (
+			<p key={index}>{msg}</p>
+		))
+		if (messages.length === 0)
+			return ""
+		return messages
+	}
+
   render() {
 		let buttons;
 		if(this.props.states != null) {
@@ -31,6 +41,7 @@ class StateLine extends React.Component {
 	return (
 		<div>
 			{buttons}
+			{this.renderText()}
 		</div>
     )
   }
@@ -39,7 +50,7 @@ class StateLine extends React.Component {
 StateLine.propTypes = {
 	states: React.PropTypes.array,
 	setState:	React.PropTypes.func.isRequired,
-	activeIndex: React.PropTypes.number.isRequired,
+	activeIndex: React.PropTypes.number,
 }
 
 export default StateLine

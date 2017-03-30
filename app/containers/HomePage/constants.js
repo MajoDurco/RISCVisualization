@@ -19,3 +19,7 @@ export const DATA_REGS = 16 // number of data registers
 
 export const INITVAL = "INIT"
 export const ENDVAL = "END"
+
+export const FIRST_OPERAND = 0
+export const SECOND_OPERAND = 1
+export const THIRD_OPERAND = 2

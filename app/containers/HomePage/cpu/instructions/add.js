@@ -1,4 +1,12 @@
-import { REGISTER_REGEX, DATA_REGS } from '../../constants'
+import {
+	REGISTER_REGEX,
+	DATA_REGS,
+	FIRST_OPERAND,
+	SECOND_OPERAND,
+	THIRD_OPERAND,
+} from '../../constants'
+import { dataHazzardOccur } from './hazards'
+import * as ui_template from '../ui_templates'
 
 /*
  * @param {String[]} params - array of instruction parameters
@@ -18,24 +26,38 @@ export function checkParams(params){
 		return false
 }
 
-export function fetch(){
-	console.log("fetched add")
+export function fetch(instruction, registers, ui){
+	ui.addTo(ui_template.fetch_template(instruction.instruction), 'state_line_msg')
 }
-export function decode(){
-	console.log("decode add")
+export function decode(instruction, registers, ui){
+	ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
-export function execute(instruction){
-	console.log(`execute ${instruction.instruction},
-	${instruction.params[0]} = ${instruction.params[1]} + ${instruction.params[2]}`)
+export function execute(instruction, registers, ui){
+	ui.addTo(ui_template.execute_template(instruction), 'state_line_msg')
+	// checking both operators for lock
+	dataHazzardOccur(ui,
+	registers[instruction.params[FIRST_OPERAND]],
+	registers[instruction.params[SECOND_OPERAND]])
+	// locking destination
+	registers[instruction.params[FIRST_OPERAND]].lock = true
 }
-export function memaccess(){
-	console.log("memaccess add")
+export function memaccess(instruction, registers, ui){
+	ui.addTo(ui_template.memaccess_template(instruction.instruction, false), 'state_line_msg')
 }
-export function writeback(instruction, registers){
-	const first_reg = registers[instruction.params[1]]
-	const second_reg = registers[instruction.params[2]]
-	registers[instruction.params[0]] = first_reg + second_reg
-	console.log("writeback add result", registers[instruction.params[0]])
+export function writeback(instruction, registers, ui){
+	const first_reg = registers[instruction.params[SECOND_OPERAND]].value
+	const second_reg = registers[instruction.params[THIRD_OPERAND]].value
+	registers[instruction.params[FIRST_OPERAND]].value = first_reg + second_reg
+	// unlock destination
+	registers[instruction.params[FIRST_OPERAND]].lock = false
+	//log + ui
+	ui.addTo(ui_template.writeback_template(
+	instruction.instruction,
+	registers[instruction.params[FIRST_OPERAND]].value,
+	instruction.params[THIRD_OPERAND]
+	), 'state_line_msg')
+	// register change
+	ui.addTo(ui_template.registerChange(instruction.params[FIRST_OPERAND]), 'reg_changes')
 }
 
 export default {

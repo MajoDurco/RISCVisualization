@@ -16,12 +16,17 @@ export const cpuSelector = createSelector(
 
 export const pipeSelector = createSelector(
 	cpuSelector,
-	(cpu) => cpu.get('pipe')
+	(cpu) => cpu.get('pipe').toJS()
 )
 
 export const regSelector = createSelector(
 	cpuSelector,
-	(cpu) => cpu.get('registers')
+	(cpu) => cpu.get('registers').toJS()
+)
+
+export const uiSelector = createSelector(
+	cpuSelector,
+	(cpu) => cpu.get('ui').toJS()
 )
 
 // EDITOR

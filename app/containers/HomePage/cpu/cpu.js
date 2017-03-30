@@ -2,7 +2,7 @@ import Immutable from 'immutable'
 
 import { INITVAL, ENDVAL } from '../constants'
 import instCode from './instructions/index'
-
+import { registerChange } from './ui_templates'
 /*
  * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
  * @return {Array} - contains all states for redux
@@ -10,30 +10,39 @@ import instCode from './instructions/index'
 export default function cpu(instructions){
 	const registers = Registers()
 	const pipeline = Pipeline()
+	const ui = UserInterface()
 	let allStates = []
-
-	registers.R2 = 2
-	registers.R3 = 4
-	allStates.push(Immutable.fromJS({ 
-		pipe: pipeline.pipeline_state.pipe,
-		registers 
-	}))// save init state
-	while (nextStep(instructions, registers, pipeline)) {
-		allStates.push(Immutable.fromJS({
-			pipe: pipeline.pipeline_state.pipe, 
-			registers
-			}
-		))
-		console.log(" -------- CYCLE ---------")
+	
+	registers.R2.value = 2
+	registers.R3.value = 4
+	// allStates.push(Immutable.fromJS({ 
+		// pipe: pipeline.pipeline_state.pipe,
+		// registers,
+		// ui: ui.ui,
+	// }))save init state
+	// ui.clearUi()
+	while (true){
+		let should_inc_PC = nextStep(instructions, registers, pipeline, ui) 
+		allStates.push(Immutable.fromJS({ 
+			pipe: pipeline.pipeline_state.pipe,
+			registers, 
+			ui: ui.ui
+		}))
+		ui.clearUi()
+		let should_continue = incrementPC(instructions, registers, pipeline, ui, should_inc_PC)
+		if(!should_continue)
+			break
 	}
 	allStates.push(Immutable.fromJS({ 
 		pipe: pipeline.pipeline_state.pipe,
-		registers 
+		registers,
+		ui: ui.ui,
 	}))// save end state
-	allStates.forEach((element, index) => {
-		console.log("state index", index)
-		console.log("state array", element.toJS())
-	})
+	// print saved states
+	// allStates.forEach((element, index) => {
+		// console.log("state index", index)
+		// console.log("state array", element.toJS())
+	// })
 	return allStates
 }
 
@@ -65,48 +74,23 @@ function Pipeline(){
  */
 function Registers(){
 	let registers = {
-		R1: 0,
-		R2: 0,
-		R3: 0,
-		PC: 0,
+		R1: {value:0, lock: false},
+		R2: {value:0, lock: false},
+		R3: {value:0, lock: false},
+		PC: {value:0, lock: false},
 	}
 	return registers
 }
 
 /*
- * @desc - Factory function for register creation
- * @param {String} name - name of creating register
- * @return {Object} - new register
- */
-// function Register(name){
-	// let actual_value = {value: 0}// init value of register
-	// return {
-		// name,
-		// actual_value,
-		// setValue(value){
-			// actual_value.value = value
-			// return actual_value.value
-		// },
-		// alterValue(fn){
-			// actual_value.value = fn(actual_value.value)
-			// return actual_value.value
-		// },
-		// getValue(){
-			// return actual_value.value
-		// }
-	// }
-// }
-
-/*
  * @desc - call executon of each instruction in pipeline, after that increment PC which points on next instruction then push it into pipeline
- * TODO push in the beginning of execution?
  * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
  * represents parsed instructions from editor, index === editor line
  * @param {Object} registers - ref to Registers object
  * @param {Object} pipeline - ref to Pipeline object
  * @return {Boolean} - indicator of the end of calcutation, false === end
  */
-function nextStep(instructions, registers, pipeline){
+function nextStep(instructions, registers, pipeline, ui){
 	let should_inc_PC = true
 	// execute instruction in pipeline
 	pipeline.pipeline_state.pipe.forEach((instruction, index) => {
@@ -114,35 +98,82 @@ function nextStep(instructions, registers, pipeline){
 			const inst_functions = instCode[instruction.instruction]
 			const functions = [inst_functions.fetch, inst_functions.decode, inst_functions.execute, inst_functions.memaccess, inst_functions.writeback]
 			if (index === 4) { // writeback
-				functions[index](instruction, registers)
+				functions[index](instruction, registers, ui)
 				if(instruction.instruction === "JMP"){
 					//check if jump destination is correct
-					if(register.PC <= (instructions.length-1) && register.PC <= 0){
+					if(registers.PC.value >= (instructions.length) || registers.PC.value <= 0){
 						console.log("jump on wrong destination") // TODO make exception on this or something
-						return false
 					}
 					should_inc_PC = false
 					pipeline.init()
 				}
 			}
 			else
-				functions[index](instruction, registers)
+				functions[index](instruction, registers, ui)
 		}
 	})
+	return should_inc_PC
 	// PC++
-	if(should_inc_PC)
-		registers.PC += 1 
+	// if(should_inc_PC)
+		// registers.PC.value += 1 
 	// PC max val is last line(instruction)
 	// move next instruction into the pipeline
-	if(registers.PC >= instructions.length) {
-		registers.PC -= 1
+	// if(registers.PC.value >= instructions.length) {
+		// registers.PC.value -= 1
+		// pipeline.pushInstructionIn(ENDVAL)
+		// if (pipeline.pipeline_state.pipe.every((instruction) => instruction === ENDVAL))
+			// return false // pipeline is empty
+	// }
+	// else {
+		// ui.addTo(registerChange('PC'), 'reg_changes')
+		// pipeline.pushInstructionIn(instructions[registers.PC.value])
+		// console.log(`${instructions[registers.PC.value].instruction} pushed into pipeline with params: ${instructions[registers.PC.value].params}`)
+	// }
+	// return true
+}
+
+function incrementPC(instructions, registers, pipeline, ui, should_inc_PC){
+	if(should_inc_PC)
+		registers.PC.value += 1 
+	// PC max val is last line(instruction)
+	// move next instruction into the pipeline
+	if(registers.PC.value >= instructions.length) {
+		registers.PC.value -= 1
 		pipeline.pushInstructionIn(ENDVAL)
 		if (pipeline.pipeline_state.pipe.every((instruction) => instruction === ENDVAL))
 			return false // pipeline is empty
 	}
 	else {
-		pipeline.pushInstructionIn(instructions[registers.PC])
-		console.log(`${instructions[registers.PC].instruction} pushed into pipeline with params: ${instructions[registers.PC].params}`)
+		ui.addTo(registerChange('PC'), 'reg_changes')
+		pipeline.pushInstructionIn(instructions[registers.PC.value])
+		console.log(`${instructions[registers.PC.value].instruction} pushed into pipeline with params: ${instructions[registers.PC.value].params}`)
 	}
 	return true
+}
+
+function UserInterface(){
+	let ui = {
+		reg_changes: [],
+		mem_changes: [],
+		notifications: [],
+		state_line_msg: [],
+	}
+	return {
+		ui,
+		addTo(element, ...arrays){
+			arrays.forEach((ui_array) => {
+				try{
+					ui[ui_array].push(element)
+				}
+				catch(TypeError){ // console log err try push as much as you can
+					console.log(`In UserInterface ${ui_array} doesn't exists in ui obj`)
+				}
+			})
+		},
+		clearUi(){
+			for(let element in ui){
+				ui[element] = []
+			}
+		},
+	}
 }

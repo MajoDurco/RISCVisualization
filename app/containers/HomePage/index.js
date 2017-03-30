@@ -5,7 +5,7 @@ import NotificationSystem from 'react-notification-system'
 import { Row, Column } from 'hedron'
 
 import { updateCpuState, animation, resetAnimation, showInstErrNotif, hideInstErrNotif } from './actions'
-import { baseHomeSelector, pipeSelector, regSelector, animationSelector, animationOpen, editorSelector } from './selectors'
+import { baseHomeSelector, pipeSelector, regSelector, animationSelector, animationOpen, editorSelector, uiSelector } from './selectors'
 import getInstructions from './parser'
 import cpu from './cpu/cpu'
 
@@ -16,7 +16,7 @@ import Registers from '../../components/Registers/index'
 import StateLine from '../../components/StateLine/index'
 import ErrNotification from '../../components/ErrNotification/index'
 
-export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+export class HomePage extends React.PureComponent {
 
 	constructor(props){
 		super(props)
@@ -43,8 +43,11 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 			this.arrState = cpu(processed_instructions)
 			this.arrStateActiveIndex = 0
 			this.props.updateCpuState(this.arrState[this.arrStateActiveIndex])
-			console.log("arrstate", this.arrState)
-			console.log("arrstate index", this.arrStateActiveIndex)
+			this.arrState.forEach((state) => {
+			 console.log(state.toJS())
+			})
+			// console.log("arrstate", this.arrState)
+			// console.log("arrstate index", this.arrStateActiveIndex)
 	}
 
 	nextState(){
@@ -78,12 +81,8 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 
   render() {
 		console.log("HomePage", this)
-		const pipeState = this.props.pipeState.toJS()
-		// console.log("pipestate", pipeState)
-		const regState = this.props.regState.toJS()
-		// console.log("regState", regState)
 		this.open = this.props.animation.get('open')
-
+		console.log('UI', this.props.ui)
     return (
 		<div>
 			<NotificationSystem ref="notificationSystem" />
@@ -93,10 +92,10 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 					<button onClick={() => {this.nextState()}}>NextState</button>
 				</Column>
 				<Column lg={4}>
-					<Pipeline pipe_state={pipeState} />
-					<Registers reg_state={regState} />
+					<Pipeline pipe_state={this.props.pipeState} />
+					<Registers reg_state={this.props.regState} ui={this.props.ui} />
 				</Column>
-				<StateLine states={this.arrState} setState={(index) => this.setLineState(index)} activeIndex={this.arrStateActiveIndex} />
+				<StateLine states={this.arrState} setState={(index) => this.setLineState(index)} activeIndex={this.arrStateActiveIndex} ui={this.props.ui} />
 			</Row>
 		</div>
     );
@@ -104,15 +103,17 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 }
 
 HomePage.propTypes = {
-	pipeState: React.PropTypes.object.isRequired,
+	pipeState: React.PropTypes.array.isRequired,
 	regState: React.PropTypes.object.isRequired,
 	updateCpuState: React.PropTypes.func.isRequired,
+	ui: React.PropTypes.object.isRequired,
 }
 
 const mapStateToProps = createStructuredSelector({
 	baseState : baseHomeSelector,
 	pipeState : pipeSelector,
 	regState  : regSelector,
+	ui        : uiSelector,
 	editor    : editorSelector,
 	animation : animationSelector,
 	open      : animationOpen,

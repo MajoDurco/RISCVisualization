@@ -10,17 +10,24 @@ import { UPDATE_CPU_STATE,
 const initial_cpu_state = fromJS({
 	pipe: [INITVAL, INITVAL, INITVAL, INITVAL, INITVAL],
 	registers: {
-		R1: 0,
-		R2: 0,
-		R3: 0,
-		PC: 0,
+		R1: {value: 0, lock: false},
+		R2: {value: 0, lock: false},
+		R3: {value: 0, lock: false},
+		PC: {value: 0, lock: false},
+	},
+	ui: {
+		mem_changes: [],
+		notifications: [],
+		reg_changes: [],
+		state_line_msg: []
 	}
 })
 
 function cpuReducer(state = initial_cpu_state, action) {
   switch (action.type) {
 		case UPDATE_CPU_STATE:
-			return state.mergeDeep(action.cpu_state)
+			return action.cpu_state
+			// return state.mergeDeep(action.cpu_state)
     default:
       return state;
   }
