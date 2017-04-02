@@ -1,4 +1,8 @@
-import { UPDATE_CPU_STATE, ERR_INSTR_NOTIF_VISIBLE, ERR_INSTR_NOTIF_HIDDEN } from './constants'
+import { 
+	UPDATE_CPU_STATE,
+	SET_STATE_LINE_INDEX,
+	SET_OPEN_MEM_DRAWER,
+} from './constants'
 
 export function updateCpuState(cpu_state){
 	return {
@@ -7,16 +11,17 @@ export function updateCpuState(cpu_state){
 	}
 }
 
-export function showInstErrNotif(errors){
+export function setStateLineIndex(index){
 	return {
-		type: ERR_INSTR_NOTIF_VISIBLE,
-		errors
+		type: SET_STATE_LINE_INDEX,
+		index
 	}
 }
 
-export function hideInstErrNotif(){
+export function openMemoryDrawer(open){
 	return {
-		type: ERR_INSTR_NOTIF_HIDDEN
+		type: SET_OPEN_MEM_DRAWER,
+		open
 	}
 }
 

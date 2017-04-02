@@ -29,10 +29,26 @@ export const uiSelector = createSelector(
 	(cpu) => cpu.get('ui').toJS()
 )
 
-// EDITOR
-export const editorSelector = createSelector(
+// STATE LINE
+export const stateLineSelector = createSelector(
 	homeSelector,
-	(home) => home.get('editor')
+	(home) => home.get('stateLine')
+)
+
+export const stateLineIndexSelector = createSelector(
+	stateLineSelector,
+	(state_line) => state_line.get('activeIndex')
+)
+
+// MEMORY
+export const memorySelector = createSelector(
+	homeSelector,
+	(home) => home.get('memory')
+)
+
+export const memDrawerOpenSelector = createSelector(
+	memorySelector,
+	(state_line) => state_line.get('drawerOpen')
 )
 
 // ANIMATION

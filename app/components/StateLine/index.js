@@ -5,7 +5,14 @@ import {
 	Stepper,
 	StepButton,
 } from 'material-ui/Stepper'
+import RaisedButton from 'material-ui/RaisedButton'
+import NextIcon from 'material-ui/svg-icons/navigation/chevron-right'
+import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left'
 
+import Center from './centerDivElements'
+/*
+ * @desc renders stateline which represents all state of simulation
+ */
 class StateLine extends React.Component {
 
 	renderText(){
@@ -19,7 +26,9 @@ class StateLine extends React.Component {
 
   render() {
 		let buttons;
-		if(this.props.states != null) {
+		if(this.props.states != null) { // if initialized
+			const next_disable = this.props.activeIndex === (this.props.states.length-1) ? true : false
+			const prev_disable = this.props.activeIndex === 0 ? true : false
 			const indexes = _.range(this.props.states.length) // create array long as states.length
 			const steps = indexes.map((index) => {
 				return (
@@ -30,9 +39,26 @@ class StateLine extends React.Component {
 					)
 			})
 			buttons = (
-				<Stepper linear={false} activeStep={this.props.activeIndex}>
-					{steps}
-				</Stepper>
+				<div>
+					<Center>
+						<RaisedButton 
+							disabled={prev_disable}
+							icon={<PrevIcon />}
+							label="Previous Step"
+							onTouchTap={() => this.props.prev()}
+						/>
+						<RaisedButton 
+							disabled={next_disable}
+							icon={<NextIcon />}
+							label="Next Step"
+							labelPosition="before"
+							onTouchTap={() => this.props.next()}
+						/>
+					</Center>
+					<Stepper linear={false} activeStep={this.props.activeIndex}>
+						{steps}
+					</Stepper>
+				</div>
 			)
 	}
 	else 
@@ -48,9 +74,12 @@ class StateLine extends React.Component {
 }
 
 StateLine.propTypes = {
-	states: React.PropTypes.array,
-	setState:	React.PropTypes.func.isRequired,
 	activeIndex: React.PropTypes.number,
+	next: React.PropTypes.func,
+	prev: React.PropTypes.func,
+	setState:	React.PropTypes.func.isRequired,
+	states: React.PropTypes.array,
+	ui: React.PropTypes.object,
 }
 
 export default StateLine

@@ -1,6 +1,6 @@
 export const UPDATE_CPU_STATE = 'app/HomePage/UPDATE_CPU_STATE'
-export const ERR_INSTR_NOTIF_VISIBLE = 'app/HomePage/ERR_INSTR_NOTIF_VISIBLE'
-export const ERR_INSTR_NOTIF_HIDDEN = 'app/HomePage/ERR_INSTR_NOTIF_HIDDEN'
+export const SET_STATE_LINE_INDEX = 'app/HomePage/SET_STATE_LINE_INDEX'
+export const SET_OPEN_MEM_DRAWER = 'app/HomePage/SET_OPEN_MEM_DRAWER'
 
 export const INSTRUCTIONS = { 
 	ADD   : 3, // ADD {REG}{REG}{REG}

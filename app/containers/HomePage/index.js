@@ -3,12 +3,24 @@ import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import NotificationSystem from 'react-notification-system'
 import { Row, Column } from 'hedron'
-import RaisedButton from 'material-ui/RaisedButton'
-import NextIcon from 'material-ui/svg-icons/navigation/chevron-right'
-import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left'
 
-import { updateCpuState, animation, resetAnimation, showInstErrNotif, hideInstErrNotif } from './actions'
-import { baseHomeSelector, pipeSelector, regSelector, animationSelector, animationOpen, editorSelector, uiSelector } from './selectors'
+import { 
+	updateCpuState,
+	animation,
+	resetAnimation,
+	setStateLineIndex,
+	openMemoryDrawer
+} from './actions' 
+import { 
+	baseHomeSelector,
+	pipeSelector,
+	regSelector,
+	animationSelector,
+	animationOpen,
+	uiSelector,
+	stateLineIndexSelector,
+	memDrawerOpenSelector,
+} from './selectors'
 import getInstructions from './parser'
 import cpu from './cpu/cpu'
 
@@ -18,14 +30,14 @@ import Pipeline from '../../components/Pipeline/index'
 import Registers from '../../components/Registers/index'
 import StateLine from '../../components/StateLine/index'
 import ErrNotification from '../../components/ErrNotification/index'
-import NamedDiv from '../../components/NamedDiv/index'
+import Memory from '../../components/Memory/index'
 
 export class HomePage extends React.PureComponent {
 
 	constructor(props){
 		super(props)
 		this.arrState = null // array of immutable states of cpu
-		this.arrStateActiveIndex = null 
+		// this.arrStateActiveIndex = null 
 	}
 	
 	componentDidMount(){
@@ -45,36 +57,33 @@ export class HomePage extends React.PureComponent {
 			this._addNotification(null, "Run succesful")
 
 			this.arrState = cpu(processed_instructions)
-			this.arrStateActiveIndex = 0
-			this.props.updateCpuState(this.arrState[this.arrStateActiveIndex])
+			this.props.updateCpuState(this.arrState[this.props.stateLineIndex])
 			this.arrState.forEach((state) => {
 			 console.log(state.toJS())
 			})
-			// console.log("arrstate", this.arrState)
-			// console.log("arrstate index", this.arrStateActiveIndex)
 	}
 
 	nextState(){
-		if(this.arrState != null) {
-			this.arrStateActiveIndex++
-			if(this.arrStateActiveIndex >= this.arrState.length)
-				this.arrStateActiveIndex = (this.arrState.length-1)
-			this.props.updateCpuState(this.arrState[this.arrStateActiveIndex])
+		let actual_index = this.props.stateLineIndex
+		actual_index++
+		if( !(actual_index >= this.arrState.length)) {
+			this.props.setStateLineIndex(actual_index)
+			this.props.updateCpuState(this.arrState[actual_index])
 		}
 	}
 
 	prevState(){
-		if(this.arrState != null) {
-			this.arrStateActiveIndex--
-			if(this.arrStateActiveIndex < 0)
-				this.arrStateActiveIndex = 0
-			this.props.updateCpuState(this.arrState[this.arrStateActiveIndex])
+		let actual_index = this.props.stateLineIndex
+		actual_index--
+		if( !(actual_index < 0)){
+			this.props.setStateLineIndex(actual_index)
+			this.props.updateCpuState(this.arrState[actual_index])
 		}
 	}
 
 	setLineState(index){
-		this.arrStateActiveIndex = index // TODO check index value
-		this.props.updateCpuState(this.arrState[this.arrStateActiveIndex])
+		this.props.setStateLineIndex(index)
+		this.props.updateCpuState(this.arrState[index])
 	}
 
 	_clearNotifications(){
@@ -95,7 +104,6 @@ export class HomePage extends React.PureComponent {
   render() {
 		console.log("HomePage", this)
 		this.open = this.props.animation.get('open')
-		console.log('UI', this.props.ui)
     return (
 		<div>
 			<NotificationSystem ref="notificationSystem" />
@@ -113,23 +121,19 @@ export class HomePage extends React.PureComponent {
 				</Row>
 				<Row>
 					<Column>
-						<RaisedButton 
-							label="Next Step"
-							icon={<NextIcon />}
-							onClick={() => {this.nextState()}}
-						/>
-						<RaisedButton 
-							label="Previous Step"
-							icon={<PrevIcon />}
-							onClick={() => {this.prevState()}}
-						/>
 						<StateLine states={this.arrState} 
 							setState={(index) => this.setLineState(index)} 
-							activeIndex={this.arrStateActiveIndex} 
+							activeIndex={this.props.stateLineIndex} 
 							ui={this.props.ui}
+							next={() => this.nextState()}
+							prev={() => this.prevState()}
 						/>
 					</Column>
 				</Row>
+				<Memory 
+					isOpen={this.props.memDrawerOpen} 
+					setOpen={(open) => {this.props.openMemoryDrawer(open)}}
+				/>
 			</div>
 		</div>
     );
@@ -144,22 +148,23 @@ HomePage.propTypes = {
 }
 
 const mapStateToProps = createStructuredSelector({
-	baseState : baseHomeSelector,
-	pipeState : pipeSelector,
-	regState  : regSelector,
-	ui        : uiSelector,
-	editor    : editorSelector,
-	animation : animationSelector,
-	open      : animationOpen,
+	animation      : animationSelector,
+	baseState      : baseHomeSelector,
+	memDrawerOpen  : memDrawerOpenSelector,
+	open           : animationOpen,
+	pipeState      : pipeSelector,
+	regState       : regSelector,
+	stateLineIndex : stateLineIndexSelector,
+	ui             : uiSelector,
 })
 
 function mapDispatchToProps(dispatch){
 	return {
-		updateCpuState: (cpu_state) => dispatch(updateCpuState(cpu_state)),
 		animate: ()                 => dispatch(animation()),
+		openMemoryDrawer: (open)    => dispatch(openMemoryDrawer(open)),
 		resetAnimation: ()          => dispatch(resetAnimation()),
-		showInstErrNotif: (errors)  => dispatch(showInstErrNotif(errors)),
-		hideInstErrNotif: ()        => dispatch(hideInstErrNotif()),
+		setStateLineIndex: (index)  => dispatch(setStateLineIndex(index)),
+		updateCpuState: (cpu_state) => dispatch(updateCpuState(cpu_state)),
 	}
 }
 
