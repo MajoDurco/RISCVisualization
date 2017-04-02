@@ -3,6 +3,9 @@ import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import NotificationSystem from 'react-notification-system'
 import { Row, Column } from 'hedron'
+import RaisedButton from 'material-ui/RaisedButton'
+import NextIcon from 'material-ui/svg-icons/navigation/chevron-right'
+import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left'
 
 import { updateCpuState, animation, resetAnimation, showInstErrNotif, hideInstErrNotif } from './actions'
 import { baseHomeSelector, pipeSelector, regSelector, animationSelector, animationOpen, editorSelector, uiSelector } from './selectors'
@@ -15,6 +18,7 @@ import Pipeline from '../../components/Pipeline/index'
 import Registers from '../../components/Registers/index'
 import StateLine from '../../components/StateLine/index'
 import ErrNotification from '../../components/ErrNotification/index'
+import NamedDiv from '../../components/NamedDiv/index'
 
 export class HomePage extends React.PureComponent {
 
@@ -59,6 +63,15 @@ export class HomePage extends React.PureComponent {
 		}
 	}
 
+	prevState(){
+		if(this.arrState != null) {
+			this.arrStateActiveIndex--
+			if(this.arrStateActiveIndex < 0)
+				this.arrStateActiveIndex = 0
+			this.props.updateCpuState(this.arrState[this.arrStateActiveIndex])
+		}
+	}
+
 	setLineState(index){
 		this.arrStateActiveIndex = index // TODO check index value
 		this.props.updateCpuState(this.arrState[this.arrStateActiveIndex])
@@ -86,17 +99,38 @@ export class HomePage extends React.PureComponent {
     return (
 		<div>
 			<NotificationSystem ref="notificationSystem" />
-			<Row divisions={6} debug={true}>
-				<Column lg={2}>
-					<Editor run={this.run.bind(this)} />
-					<button onClick={() => {this.nextState()}}>NextState</button>
-				</Column>
-				<Column lg={4}>
-					<Pipeline pipe_state={this.props.pipeState} />
-					<Registers reg_state={this.props.regState} ui={this.props.ui} />
-				</Column>
-				<StateLine states={this.arrState} setState={(index) => this.setLineState(index)} activeIndex={this.arrStateActiveIndex} ui={this.props.ui} />
-			</Row>
+			<div>
+				<Row debug={true}>
+					<Column md={5} lg={3}>
+						<Editor run={this.run.bind(this)} />
+					</Column>
+					<Column md={7} lg={9}>
+						<Pipeline pipe_state={this.props.pipeState} />
+						<Registers reg_state={this.props.regState} 
+							ui={this.props.ui}
+						/>
+					</Column>
+				</Row>
+				<Row>
+					<Column>
+						<RaisedButton 
+							label="Next Step"
+							icon={<NextIcon />}
+							onClick={() => {this.nextState()}}
+						/>
+						<RaisedButton 
+							label="Previous Step"
+							icon={<PrevIcon />}
+							onClick={() => {this.prevState()}}
+						/>
+						<StateLine states={this.arrState} 
+							setState={(index) => this.setLineState(index)} 
+							activeIndex={this.arrStateActiveIndex} 
+							ui={this.props.ui}
+						/>
+					</Column>
+				</Row>
+			</div>
 		</div>
     );
   }

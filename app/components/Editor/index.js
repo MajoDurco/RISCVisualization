@@ -1,5 +1,7 @@
 import React from 'react';
 import AceEditor from 'react-ace'
+import RaisedButton from 'material-ui/RaisedButton'
+import PlayCircle from 'material-ui/svg-icons/av/play-circle-outline'
 
 import 'brace/theme/monokai'
 
@@ -13,6 +15,7 @@ class Editor extends React.Component {
 
   render() {
 		const defVal = `add R1 R2 R3 ${'\n'}`
+
     return (
 			<div>
 				<AceEditor 
@@ -24,7 +27,12 @@ class Editor extends React.Component {
 					width={'450'}
 					editorProps={{$blockScrolling: true}}
 				/>
-				<button onClick={() => this.props.run(TEXT)}>Run</button>
+				<RaisedButton
+					label="Run"
+					backgroundColor="#a4c639"
+					icon={<PlayCircle />}
+					onClick={() => this.props.run(TEXT)}
+				/>
 			</div>
     );
   }

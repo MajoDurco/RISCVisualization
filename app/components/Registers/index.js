@@ -1,10 +1,19 @@
 import React from 'react';
-
 import _ from 'lodash'
 import styled from 'styled-components';
+import { Row, Column } from 'hedron'
 
-const RegDiv = styled.div`
+import NamedDiv from '../NamedDiv/index'
+
+const RegistersDiv = styled.div`
+	// min-width: 120px;
+	// width: 10%;
+`
+
+const RegContext = styled.div`
 	background-color: ${props => props.change ? `lightblue` : `none`};
+	overflow: auto;
+	text-align: center;
 `
 
 class Registers extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -16,6 +25,8 @@ class Registers extends React.Component { // eslint-disable-line react/prefer-st
 		return found ? true : false
 	}
 
+
+
   render() {
 		const reg_list = _.toPairs(this.props.reg_state)
 		// [[reg<String>, {value:Number, lock:Boolean}], [...],..]
@@ -23,18 +34,24 @@ class Registers extends React.Component { // eslint-disable-line react/prefer-st
 			const name = register[0]
 			const value = register[1].value
 			const changed = this.isChanged(name)
-			console.log("changed", changed)
 			return (
-			<RegDiv key={name} change={changed}>
-				<p><b>{name}</b></p>
-				<p>{value}</p>
-			</RegDiv>
+			<Column key={name} xs={6} sm={3} md={2} lg={1}>
+				<NamedDiv header={name}>
+					<RegContext key={name} change={changed}>
+						<span>{value}</span>
+					</RegContext>
+				</NamedDiv>
+			</Column>
 			)
 		})
     return (
-      <div>
-				{registers}
-      </div>
+		<RegistersDiv>
+				<NamedDiv header="Registers">
+						<Row debug={true}>
+							{registers}
+						</Row>
+				</NamedDiv>
+		</RegistersDiv>
     );
   }
 }
