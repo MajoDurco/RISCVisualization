@@ -20,11 +20,11 @@ export const media = Object.keys(sizes).reduce((accumulator, label) => {
 }, {})
 
 export const HedronMedia = (props) => (
-	<BreakpointProvider breakpoints={{
-		lg: 2100, // 1880 lower md, lg 1880 up
-		md: 1300, // 1164 lower sm
-		sm: 500, // 446 lower xs
-	}}>
-		{props.children}
-	</BreakpointProvider>
+  <BreakpointProvider breakpoints={{
+    lg: 1800, // 1880 lower md, lg 1880 up
+    md: 1100, // 1164 lower sm
+    sm: 600, // 446 lower xs
+  }}>
+    {props.children}
+  </BreakpointProvider>
 )

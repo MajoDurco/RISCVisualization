@@ -1,3 +1,6 @@
+import { fromJS } from 'immutable'
+import _ from 'lodash'
+
 export const UPDATE_CPU_STATE = 'app/HomePage/UPDATE_CPU_STATE'
 export const SET_STATE_LINE_INDEX = 'app/HomePage/SET_STATE_LINE_INDEX'
 export const SET_OPEN_MEM_DRAWER = 'app/HomePage/SET_OPEN_MEM_DRAWER'
@@ -7,7 +10,7 @@ export const INSTRUCTIONS = {
 	SUB   : 3, // SUB {REG}{REG}{REG}
 	LOAD  : 2, //	LOAD {REG}{MEM}
 	STORE : 2, // STORE {MEM}{REG}
-	MOV   : 2, // MOV {VALUE}{MEM}
+	MOV   : 2, // MOV {MEM_INDEX}{VALUE}
 	AND   : 3, // AND {REG}{REG}{REG}
 	OR    : 3, //	OR {REG}{REG}{REG}
 	JMP   : 1, // JMP {REG/LINE}
@@ -23,3 +26,23 @@ export const ENDVAL = "END"
 export const FIRST_OPERAND = 0
 export const SECOND_OPERAND = 1
 export const THIRD_OPERAND = 2
+
+export const MEM_LENGTH = 32
+const memory = _.range(MEM_LENGTH).map(() => 0)
+
+export const INIT_STATE = fromJS({
+	pipe: [INITVAL, INITVAL, INITVAL, INITVAL, INITVAL],
+	registers: {
+		R1: {value: 0, lock: false},
+		R2: {value: 0, lock: false},
+		R3: {value: 0, lock: false},
+		PC: {value: 0, lock: false},
+	},
+	memory,
+	ui: {
+		mem_changes: [],
+		notifications: [],
+		reg_changes: [],
+		state_line_msg: []
+	},
+})

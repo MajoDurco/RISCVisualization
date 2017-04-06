@@ -3,29 +3,29 @@ export const close_button = {
 	top: `40vh`,
 	right: 0,
 	transform: `rotate(-90deg)`,
-	"transform-origin": `bottom right`,
-	"-ms-transform": `rotate(-90deg)`,
-	"-webkit-transform": `rotate(-90deg)`,
+	"transformOrigin": `bottom right`,
+	"msTransform": `rotate(-90deg)`,
+	"WebkitTransform": `rotate(-90deg)`,
 }
 
 export const open_button = {
-	position: `relative`,
+	position: `absolute`,
 	top: `40vh`,
 	left: `0`,
-	"transform-origin": `left bottom`,
+	"transformOrigin": `left bottom`,
 	transform: `rotate(90deg)`,
-	"-ms-transform": `rotate(90deg)`,
-	"-webkit-transform": `rotate(90deg)`,
+	"msTransform": `rotate(90deg)`,
+	"WebkitTransform": `rotate(90deg)`,
 }
 
 export const open_icon = {
 	transform: `rotate(-90deg)`,
-	"-ms-transform": `rotate(-90deg)`,
-	"-webkit-transform": `rotate(-90deg)`,
+	"msTransform": `rotate(-90deg)`,
+	"WebkitTransform": `rotate(-90deg)`,
 }
 
 export const close_icon = {
 	transform: `rotate(90deg)`,
-	"-ms-transform": `rotate(90deg)`,
-	"-webkit-transform": `rotate(90deg)`,
+	"msTransform": `rotate(90deg)`,
+	"WebkitTransform": `rotate(90deg)`,
 }

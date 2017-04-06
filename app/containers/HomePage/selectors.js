@@ -29,6 +29,11 @@ export const uiSelector = createSelector(
 	(cpu) => cpu.get('ui').toJS()
 )
 
+export const memorySelector = createSelector(
+	cpuSelector,
+	(cpu) => cpu.get('memory').toJS()
+)
+
 // STATE LINE
 export const stateLineSelector = createSelector(
 	homeSelector,
@@ -40,14 +45,14 @@ export const stateLineIndexSelector = createSelector(
 	(state_line) => state_line.get('activeIndex')
 )
 
-// MEMORY
-export const memorySelector = createSelector(
+// MEMORY TAB
+export const memoryTabSelector = createSelector(
 	homeSelector,
-	(home) => home.get('memory')
+	(home) => home.get('memoryTab')
 )
 
 export const memDrawerOpenSelector = createSelector(
-	memorySelector,
+	memoryTabSelector,
 	(state_line) => state_line.get('drawerOpen')
 )
 

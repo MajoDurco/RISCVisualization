@@ -11,12 +11,12 @@ export default class App extends React.PureComponent {
 
   render() {
     return (
-			<HedronMedia>
-				<div>
-					<Nav />
-					{React.Children.toArray(this.props.children)}
-				</div>
-			</HedronMedia>
+      <HedronMedia>
+        <div>
+          <Nav />
+          {React.Children.toArray(this.props.children)}
+        </div>
+      </HedronMedia>
     );
   }
 }
