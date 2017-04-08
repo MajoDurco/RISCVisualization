@@ -21,7 +21,7 @@ class StateLine extends React.Component {
 		))
 		if (messages.length === 0)
 			return ""
-		return messages
+    return _.reverse(messages) // reverses array to be describing states from top of pipeline to the bottom
 	}
 
   render() {

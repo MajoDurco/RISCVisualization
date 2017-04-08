@@ -2,7 +2,7 @@ import Immutable from 'immutable'
 
 import { INITVAL, ENDVAL, INIT_STATE } from '../constants'
 import instCode from './instructions/index'
-import { registerChange } from './ui_templates'
+import { memRegChange } from './ui_templates'
 
 /*
  * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
@@ -87,6 +87,8 @@ function nextStep(instructions, registers, pipeline, ui, memory){
       const inst_functions = instCode[instruction.instruction]
       const functions = [inst_functions.fetch, inst_functions.decode, inst_functions.execute, inst_functions.memaccess, inst_functions.writeback]
       if (index === 4) { // writeback
+        if(instruction.instruction === "JMP")
+          ui.clearUi() // remove all from stateline ui except jump message will be added one line down
         functions[index](instruction, registers, ui, memory)
         if(instruction.instruction === "JMP"){
           //check if jump destination is correct
@@ -124,7 +126,7 @@ function incrementPC(instructions, registers, pipeline, ui, should_inc_PC){
       return false // pipeline is empty
   }
   else {
-    ui.addTo(registerChange('PC'), 'reg_changes')
+    ui.addTo(memRegChange('PC'), 'reg_changes')
     pipeline.pushInstructionIn(instructions[registers.PC.value])
     console.log(`${instructions[registers.PC.value].instruction} pushed into pipeline with params: ${instructions[registers.PC.value].params}`)
   }

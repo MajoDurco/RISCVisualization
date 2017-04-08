@@ -31,7 +31,7 @@ function animation(state = fromJS({open: false}), action){
 }
 
 const initial_state_line = fromJS({
-	activeIndex: 0
+  activeIndex: 0  // statline not initialized
 })
 
 function stateLine(state = initial_state_line, action){

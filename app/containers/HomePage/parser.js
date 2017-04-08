@@ -56,7 +56,7 @@ export function parse(text){
 /*
  * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
  * @param {{String: Number}} rules - rules for all instructions
- * @return {{valid: Boolean, annotations: Array[]}}
+ * @return {{valid: Boolean, annotations: Array[]}} - bool represents validity of code an annotations error messages for notification report
  */
 export function verifyInstructions(instructions, rules=INSTRUCTIONS){
 	let annotations = []
@@ -64,9 +64,11 @@ export function verifyInstructions(instructions, rules=INSTRUCTIONS){
 		const instruction_name = instr.instruction.toUpperCase()
 		if(instruction_name in rules){ 
 			if(instr.params.length === rules[instruction_name]) {
-				if(!(spec_instructions[instruction_name].checkParams(instr.params))){ // wrong num. of params
-					annotations.push({line: line+1, text: `Wrong params for ${instruction_name} instruction`})
-				}
+				const check = spec_instructions[instruction_name].checkParams(instr.params, instructions.length)
+        if(typeof check === 'string') // string message or false, eg. ERROR
+					annotations.push({line: line+1, text: `${check}`})
+        if(check === false)
+          annotations.push({line: line+1, text: `Wrong params for ${instruction_name} instruction`})
 			}
 			else { // wrong format of parameter
 				annotations.push({line: line+1, text: `Instruction ${instruction_name} uses ${rules[instruction_name]} params not ${instr.params.length}`})

@@ -6,14 +6,19 @@ export const SET_STATE_LINE_INDEX = 'app/HomePage/SET_STATE_LINE_INDEX'
 export const SET_OPEN_MEM_DRAWER = 'app/HomePage/SET_OPEN_MEM_DRAWER'
 
 export const INSTRUCTIONS = { 
-	ADD   : 3, // ADD {REG}{REG}{REG}
-	SUB   : 3, // SUB {REG}{REG}{REG}
-	LOAD  : 2, //	LOAD {REG}{MEM}
-	STORE : 2, // STORE {MEM}{REG}
-	MOV   : 2, // MOV {MEM_INDEX}{VALUE}
-	AND   : 3, // AND {REG}{REG}{REG}
-	OR    : 3, //	OR {REG}{REG}{REG}
-	JMP   : 1, // JMP {REG/LINE}
+	ADD    : 3, // ADD {REG}{REG}{REG}
+	AND    : 3, // AND {REG}{REG}{REG}
+	JMP    : 1, // JMP {REG/LINE}
+	LOAD   : 2, // LOAD {REG}{MEM}
+	MOV    : 2, // MOV {MEM_INDEX}{VALUE}
+  NOP    : 0, // NOP
+  NOR    : 3, // NOR {REG}{REG}{REG}
+	OR     : 3, // OR {REG}{REG}{REG}
+	STORE  : 2, // STORE {MEM}{REG}
+	SHIFTL : 3, // SHIFTL {REG}
+	SHIFTR : 3, // SHIFTR {REG}
+	SUB    : 3, // SUB {REG}{REG}{REG}
+  XOR    : 3, // XOR {REG}{REG}{REG}
 }
 
 export const REGISTER_REGEX = /^R(\d{1,2})$/

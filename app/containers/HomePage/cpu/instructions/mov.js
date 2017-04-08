@@ -1,6 +1,10 @@
-import { MEM_LENGTH } from '../../constants'
 import * as ui_template from '../ui_templates'
+import { 
+  FIRST_OPERAND,
+  SECOND_OPERAND,
+} from '../../constants'
 
+import { memCheck, numberCheck } from './checkers'
 /*
  * @params {String[]} params - array of instruction parameters, length is already
  * checked in getInstrucions() in HomePage
@@ -8,21 +12,14 @@ import * as ui_template from '../ui_templates'
  */
 export function checkParams(params){
   // mem index
-  const mem_index = Number(params[0])
-  const value = Number(params[1])
-  if(isNaN(mem_index)) {
-    console.log("mem index wrong")
+  const mem_index = numberCheck(params[FIRST_OPERAND])
+  if(mem_index === false )
     return false
-  }
-  if( ! (mem_index >= 0 && mem_index < MEM_LENGTH)) {
-    console.log("mem index out of range")
+  if(!memCheck(mem_index))
     return false
-  }
   // value
-  if(isNaN(value)){
-    console.log("value not a number")
+  if(numberCheck(params[SECOND_OPERAND]) === false)
     return false
-  }
   return true
 }
 
@@ -39,10 +36,12 @@ export function memaccess(instruction, registers, ui){
   ui.addTo('MOV memaccess', 'state_line_msg')
 }
 export function writeback(instruction, registers, ui, memory){
-  const mem_index = Number(instruction.params[0])
-  const value = Number(instruction.params[1])
+  const mem_index = Number(instruction.params[FIRST_OPERAND])
+  const value = Number(instruction.params[SECOND_OPERAND])
   memory[mem_index] = value
+  // log, mem ui
   ui.addTo(`MOV has written ${value} into memory index ${mem_index}`, 'state_line_msg')
+  ui.addTo(ui_template.memRegChange(mem_index), 'mem_changes')
 }
 
 export default {

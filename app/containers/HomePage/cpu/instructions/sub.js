@@ -24,7 +24,7 @@ export function decode(instruction, registers, ui){
 	ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
 export function execute(instruction, registers, ui){
-	ui.addTo(ui_template.execute_template(instruction, '+'), 'state_line_msg')
+	ui.addTo(ui_template.execute_template(instruction, '-'), 'state_line_msg')
 	// checking both operators for lock
 	dataHazzardOccur(ui,
 	registers[instruction.params[SECOND_OPERAND]],
@@ -38,14 +38,14 @@ export function memaccess(instruction, registers, ui){
 export function writeback(instruction, registers, ui){
 	const first_reg = registers[instruction.params[SECOND_OPERAND]].value
 	const second_reg = registers[instruction.params[THIRD_OPERAND]].value
-	registers[instruction.params[FIRST_OPERAND]].value = first_reg + second_reg
+	registers[instruction.params[FIRST_OPERAND]].value = first_reg - second_reg
 	// unlock destination
 	registers[instruction.params[FIRST_OPERAND]].lock = false
 	//log + ui
 	ui.addTo(ui_template.writeback_template(
 	instruction.instruction,
-	registers[instruction.params[FIRST_OPERAND]].value,
-	instruction.params[FIRST_OPERAND]
+  registers[instruction.params[FIRST_OPERAND]].value, // result
+  instruction.params[FIRST_OPERAND] // destination
 	), 'state_line_msg')
 	// register change
 	ui.addTo(ui_template.memRegChange(instruction.params[FIRST_OPERAND]), 'reg_changes')

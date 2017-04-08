@@ -1,11 +1,16 @@
 import { Row } from 'hedron'
 import styled from 'styled-components'
 
+import { pulse } from '../animations'
+
 export const SHORTEN_STAGES = "800px"
 export const LOW_RESOLUTION = "375px"
 export const LOW_RES_WIDTH = "11%"
 
 export const Cell = styled.div`
+  animation-name: ${props => props.animation ? `${pulse}` : "none"};
+  animation-duration: 1s;
+  background: ${props => props.activeIndex ? "lightblue" : "none"};
   border: 1px solid;
   border-left: ${props => props.position === "first" ? "1px solid" : "none"};
   border-right: ${props => props.position === "last" ? "1px solid" : "none"};
@@ -15,7 +20,7 @@ export const Cell = styled.div`
 
   @media (max-width: ${LOW_RESOLUTION}){
   width: ${LOW_RES_WIDTH};
-  };
+  }
 `
 
 export const Empty = styled.div`
@@ -24,7 +29,7 @@ export const Empty = styled.div`
 
   @media (max-width: ${LOW_RESOLUTION}){
   width: ${LOW_RES_WIDTH};
-  };
+  }
 `
 
 export const PipeRow = styled(Row)`
@@ -38,7 +43,7 @@ export const Stage = styled.p`
 
  @media (max-width: ${SHORTEN_STAGES}){
   display: none;
- };
+ }
 `
 
 export const StageShort = styled.p`
@@ -49,13 +54,12 @@ export const StageShort = styled.p`
    
   @media (max-width: ${SHORTEN_STAGES}){
     display: initial;
-  };
-
+  }
 `
+
 export const Instruction = styled.p`
   margin:0;
 `
 
 export const PipeContainer = styled.div`
 `
-

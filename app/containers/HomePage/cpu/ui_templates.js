@@ -6,9 +6,9 @@ export function fetch_template(instruction){
 export function decode_template(instruction){
   return `Instruction ${instruction} decoded`
 }
-export function execute_template(instruction){
+export function execute_template(instruction, operator){
   return `Executed ${instruction.instruction} instruction, 
-  ${instruction.params[FIRST_OPERAND]} = ${instruction.params[SECOND_OPERAND]} + ${instruction.params[THIRD_OPERAND]}`
+  ${instruction.params[FIRST_OPERAND]} = ${instruction.params[SECOND_OPERAND]} ${operator} ${instruction.params[THIRD_OPERAND]}`
 }
 export function memaccess_template(instruction, is_accssed){
   if(is_accssed)
@@ -20,6 +20,6 @@ export function writeback_template(instruction, result, destination){
   return `Instruction ${instruction} has written ${result} into ${destination}`
 }
 
-export function registerChange(register){
-  return {name: register, animation_on: false}
+export function memRegChange(target){
+  return {name: target, animation_on: false} // target for register is name like R1 and for memory index
 }

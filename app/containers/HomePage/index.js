@@ -47,22 +47,25 @@ export class HomePage extends React.PureComponent {
   }
 
   run(text){
-      let processed_instructions = getInstructions(text)
-      if('valid' in processed_instructions){
-        this._clearNotifications()
-        this._addNotification(null, "Error in code", 'error', 0, 'tc',
-          (<ErrNotification errors={processed_instructions.annotations} />)) 
-        return
-      }
-      //instructions are OK
+    let processed_instructions = getInstructions(text)
+    if('valid' in processed_instructions){
       this._clearNotifications()
-      this._addNotification(null, "Run succesful")
+      this._addNotification(null, "Error in code", 'error', 0, 'tc',
+        (<ErrNotification errors={processed_instructions.annotations} />)) 
+      return
+    }
+    //instructions are OK
+    this._clearNotifications()
+    this._addNotification(null, "Run succesful")
 
-      this.arrState = cpu(processed_instructions)
-      this.props.updateCpuState(this.arrState[this.props.stateLineIndex])
-      this.arrState.forEach((state) => {
-       console.log(state.toJS())
-      })
+    //init stateline to index 0
+    this.props.setStateLineIndex(0)
+
+    this.arrState = cpu(processed_instructions)
+    this.props.updateCpuState(this.arrState[this.props.stateLineIndex])
+    this.arrState.forEach((state) => {
+     console.log(state.toJS())
+    })
   }
 
   nextState(){
@@ -117,7 +120,10 @@ export class HomePage extends React.PureComponent {
           <Column md={7} lg={9}>
             <Row debug={true}>
               <Column>
-                <Pipeline pipe_state={this.props.pipeState} />
+                <Pipeline 
+                  pipe_state={this.props.pipeState}
+                  activeIndex={this.props.stateLineIndex}
+                />
               </Column>
             </Row>
             <Row debug={true}>
@@ -145,7 +151,10 @@ export class HomePage extends React.PureComponent {
           isOpen={this.props.memDrawerOpen} 
           setOpen={(open) => {this.props.openMemoryDrawer(open)}}
         >
-          <MemoryState memory={this.props.memory} />
+          <MemoryState 
+            memory={this.props.memory}
+            ui={this.props.ui}
+          />
         </Memory>
       </div>
     </div>
