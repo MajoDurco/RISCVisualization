@@ -30,8 +30,9 @@ class Pipeline extends React.PureComponent {
     let stages = ["FETCH", "DECODE", "EXECUTE", "MEM ACCESS", "WRITEBACK"]
     let stages_short = ["F", "D", "E", "M", "W"] // use for small displays
     // generate shift divs base on index
+    let pipe_state = this.props.pipe_state.toJS()
     // reverse pipestate in order to start showing instructions from bottom of pipeline not top
-    let pipe_state = _.reverse(this.props.pipe_state)
+    _.reverse(pipe_state)
     pipe_state = pipe_state.map((instruction, row_index) => {
       if(typeof(instruction) === 'object') // else is INITVAL of ENDVAL which is string
         instruction = instruction.instruction
@@ -48,10 +49,11 @@ class Pipeline extends React.PureComponent {
           position = "last"
         // show active execution cell
         const activeIndex = this.isActive(row_index, cell_index, instruction)
+        const animationOn = this.props.animationOn && activeIndex
         return (
           <Cell 
             activeIndex={activeIndex}
-            animation={activeIndex}
+            animation={animationOn}
             key={cell_index}
             position={position} 
           >
@@ -78,8 +80,9 @@ class Pipeline extends React.PureComponent {
 }
 
 Pipeline.propTypes = {
- pipe_state: React.PropTypes.array.isRequired,
- activeIndex: React.PropTypes.number
+ // pipe_state: React.PropTypes.array.isRequired,
+ activeIndex: React.PropTypes.number,
+ animatinOn: React.PropTypes.bool
 }
 
 export default Pipeline

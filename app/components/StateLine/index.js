@@ -9,7 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import NextIcon from 'material-ui/svg-icons/navigation/chevron-right'
 import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left'
 
-import Center from './centerDivElements'
+import {Center, StepsContainer } from './centerDivElements'
 /*
  * @desc renders stateline which represents all state of simulation
  */
@@ -39,7 +39,7 @@ class StateLine extends React.Component {
 					)
 			})
 			buttons = (
-				<div>
+        <div>
 					<Center>
 						<RaisedButton 
 							disabled={prev_disable}
@@ -55,10 +55,12 @@ class StateLine extends React.Component {
 							onTouchTap={() => this.props.next()}
 						/>
 					</Center>
-					<Stepper linear={false} activeStep={this.props.activeIndex}>
-						{steps}
-					</Stepper>
-				</div>
+          <StepsContainer>
+            <Stepper linear={false} activeStep={this.props.activeIndex}>
+              {steps}
+            </Stepper>
+          </StepsContainer>
+        </div>
 			)
 	}
 	else 

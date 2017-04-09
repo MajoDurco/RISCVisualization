@@ -4,6 +4,8 @@ import _ from 'lodash'
 export const UPDATE_CPU_STATE = 'app/HomePage/UPDATE_CPU_STATE'
 export const SET_STATE_LINE_INDEX = 'app/HomePage/SET_STATE_LINE_INDEX'
 export const SET_OPEN_MEM_DRAWER = 'app/HomePage/SET_OPEN_MEM_DRAWER'
+export const ANIMATION_ON_TRUE = 'app/HomePage/ANIMATION_ON_TRUE'
+export const ANIMATION_ON_FALSE = 'app/HomePage/ANIMATION_ON_FALSE'
 
 export const INSTRUCTIONS = { 
 	ADD    : 3, // ADD {REG}{REG}{REG}
@@ -32,6 +34,8 @@ export const FIRST_OPERAND = 0
 export const SECOND_OPERAND = 1
 export const THIRD_OPERAND = 2
 
+export const ANIMATION_DURATION = 1  // sec
+
 export const MEM_LENGTH = 32
 const memory = _.range(MEM_LENGTH).map(() => 0)
 
@@ -48,6 +52,6 @@ export const INIT_STATE = fromJS({
 		mem_changes: [],
 		notifications: [],
 		reg_changes: [],
-		state_line_msg: []
+		state_line_msg: [],
 	},
 })

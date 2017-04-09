@@ -11,12 +11,15 @@ export const baseHomeSelector = createSelector(
 
 export const cpuSelector = createSelector(
 	homeSelector,
-	(home_page) => home_page.get('cpu')
+  (home_page) => {
+    console.log("HOME selector")
+    return home_page.get('cpu')
+  }
 )
 
 export const pipeSelector = createSelector(
 	cpuSelector,
-	(cpu) => cpu.get('pipe').toJS()
+	(cpu) => cpu.get('pipe')
 )
 
 export const regSelector = createSelector(
@@ -62,7 +65,7 @@ export const animationSelector = createSelector(
 	(home) => home.get('animation')
 )
 
-export const animationOpen= createSelector(
+export const animationOn = createSelector(
 	animationSelector,
-	(animation) => animation.get('open')
+	(animation) => animation.get('on')
 )

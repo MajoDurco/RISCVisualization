@@ -1,7 +1,9 @@
 import { 
-	UPDATE_CPU_STATE,
-	SET_STATE_LINE_INDEX,
+  ANIMATION_ON_TRUE,
+  ANIMATION_ON_FALSE,
 	SET_OPEN_MEM_DRAWER,
+	SET_STATE_LINE_INDEX,
+	UPDATE_CPU_STATE,
 } from './constants'
 
 export function updateCpuState(cpu_state){
@@ -25,14 +27,9 @@ export function openMemoryDrawer(open){
 	}
 }
 
-export function animation(){
-	return {
-		type: 'ANIMATE'
-	}
-}
-
-export function resetAnimation(){
-	return {
-		type: 'RESET'
-	}
+export function AnimationOn(on){
+  if(on)
+	return {type: ANIMATION_ON_TRUE}
+  else
+	return {type: ANIMATION_ON_FALSE}
 }

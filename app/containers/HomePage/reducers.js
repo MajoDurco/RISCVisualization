@@ -6,6 +6,8 @@ import {
 	SET_STATE_LINE_INDEX,
 	SET_OPEN_MEM_DRAWER,
 	UPDATE_CPU_STATE,
+  ANIMATION_ON_TRUE,
+  ANIMATION_ON_FALSE,
 } from './constants'
 
 const initial_cpu_state = INIT_STATE
@@ -13,18 +15,23 @@ const initial_cpu_state = INIT_STATE
 function cpuReducer(state = initial_cpu_state, action) {
   switch (action.type) {
 		case UPDATE_CPU_STATE:
+      console.log("UPDATING CPU STATE")
 			return action.cpu_state
     default:
       return state;
   }
 }
 
-function animation(state = fromJS({open: false}), action){
+const initial_animation_state = fromJS({
+  on: false
+})
+
+function animation(state = initial_animation_state, action){
 	switch (action.type) {
-		case 'ANIMATE':
-			return state.set('open', true)
-		case 'RESET':
-			return state.set('open', false)
+		case ANIMATION_ON_FALSE:
+			return state.set('on', false)
+		case ANIMATION_ON_TRUE:
+			return state.set('on', true)
 		default:
 			return state
 	}
@@ -37,6 +44,7 @@ const initial_state_line = fromJS({
 function stateLine(state = initial_state_line, action){
 	switch (action.type) {
 		case SET_STATE_LINE_INDEX:
+      console.log("SETTING LINE INDEX")
 			return state.set('activeIndex', action.index)
 		default:
 			return state

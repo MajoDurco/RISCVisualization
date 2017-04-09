@@ -7,10 +7,6 @@ injectGlobal`
 		box-sizing: border-box;
   }
 
-  body.fontLoaded {
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  }
-
 	#app {
 		height: 100vh;
 		width: 100vw;

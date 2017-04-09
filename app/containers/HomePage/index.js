@@ -5,34 +5,32 @@ import NotificationSystem from 'react-notification-system'
 import { Row, Column } from 'hedron'
 
 import { 
-  updateCpuState,
-  animation,
-  resetAnimation,
+  openMemoryDrawer,
   setStateLineIndex,
-  openMemoryDrawer
+  updateCpuState,
 } from './actions' 
 import { 
+  animationOn,
+  animationSelector,
   baseHomeSelector,
+  memDrawerOpenSelector,
+  memorySelector,
   pipeSelector,
   regSelector,
-  animationSelector,
-  animationOpen,
-  uiSelector,
   stateLineIndexSelector,
-  memDrawerOpenSelector,
-  memorySelector
+  uiSelector,
 } from './selectors'
 import getInstructions from './parser'
 import cpu from './cpu/cpu'
 
 // components
 import Editor from '../../components/Editor/index'
-import Pipeline from '../../components/Pipeline/index'
-import Registers from '../../components/Registers/index'
-import StateLine from '../../components/StateLine/index'
 import ErrNotification from '../../components/ErrNotification/index'
 import Memory from '../../components/Memory/index'
 import MemoryState from '../../components/MemoryState/index'
+import Pipeline from '../../components/Pipeline/index'
+import Registers from '../../components/Registers/index'
+import StateLine from '../../components/StateLine/index'
 
 export class HomePage extends React.PureComponent {
 
@@ -62,10 +60,10 @@ export class HomePage extends React.PureComponent {
     this.props.setStateLineIndex(0)
 
     this.arrState = cpu(processed_instructions)
-    this.props.updateCpuState(this.arrState[this.props.stateLineIndex])
-    this.arrState.forEach((state) => {
-     console.log(state.toJS())
-    })
+    this.props.updateCpuState(this.arrState[0])
+    // this.arrState.forEach((state) => {
+     // console.log(state.toJS())
+    // })
   }
 
   nextState(){
@@ -123,6 +121,7 @@ export class HomePage extends React.PureComponent {
                 <Pipeline 
                   pipe_state={this.props.pipeState}
                   activeIndex={this.props.stateLineIndex}
+                  animationOn={this.props.animationOn}
                 />
               </Column>
             </Row>
@@ -131,6 +130,7 @@ export class HomePage extends React.PureComponent {
                 <Registers 
                   reg_state={this.props.regState} 
                   ui={this.props.ui}
+                  animationOn={this.props.animationOn}
                 />
               </Column>
             </Row>
@@ -154,6 +154,7 @@ export class HomePage extends React.PureComponent {
           <MemoryState 
             memory={this.props.memory}
             ui={this.props.ui}
+            animationOn={this.props.animationOn}
           />
         </Memory>
       </div>
@@ -163,7 +164,7 @@ export class HomePage extends React.PureComponent {
 }
 
 HomePage.propTypes = {
-  pipeState: React.PropTypes.array.isRequired,
+  pipeState: React.PropTypes.object.isRequired, // Immutable
   regState: React.PropTypes.object.isRequired,
   updateCpuState: React.PropTypes.func.isRequired,
   ui: React.PropTypes.object.isRequired,
@@ -171,10 +172,10 @@ HomePage.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   animation      : animationSelector,
+  animationOn    : animationOn,
   baseState      : baseHomeSelector,
   memDrawerOpen  : memDrawerOpenSelector,
   memory         : memorySelector,
-  open           : animationOpen,
   pipeState      : pipeSelector,
   regState       : regSelector,
   stateLineIndex : stateLineIndexSelector,
@@ -183,9 +184,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch){
   return {
-    animate: ()                 => dispatch(animation()),
     openMemoryDrawer: (open)    => dispatch(openMemoryDrawer(open)),
-    resetAnimation: ()          => dispatch(resetAnimation()),
     setStateLineIndex: (index)  => dispatch(setStateLineIndex(index)),
     updateCpuState: (cpu_state) => dispatch(updateCpuState(cpu_state)),
   }

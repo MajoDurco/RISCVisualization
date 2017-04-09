@@ -2,6 +2,7 @@ import { Row } from 'hedron'
 import styled from 'styled-components'
 
 import { pulse } from '../animations'
+import { ANIMATION_DURATION } from '../../containers/HomePage/constants'
 
 export const SHORTEN_STAGES = "800px"
 export const LOW_RESOLUTION = "375px"
@@ -9,7 +10,7 @@ export const LOW_RES_WIDTH = "11%"
 
 export const Cell = styled.div`
   animation-name: ${props => props.animation ? `${pulse}` : "none"};
-  animation-duration: 1s;
+  animation-duration: ${ANIMATION_DURATION}s;
   background: ${props => props.activeIndex ? "lightblue" : "none"};
   border: 1px solid;
   border-left: ${props => props.position === "first" ? "1px solid" : "none"};

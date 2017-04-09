@@ -1,3 +1,5 @@
+import styled from 'styled-components'
+
 export const close_button = {
 	position: `fixed`,
 	top: `40vh`,
@@ -29,3 +31,9 @@ export const close_icon = {
 	"msTransform": `rotate(90deg)`,
 	"WebkitTransform": `rotate(90deg)`,
 }
+
+export const MemoryDrawer = styled.div`
+ div:first-child {
+    z-index: 1;
+ }
+`

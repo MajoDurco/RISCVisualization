@@ -8,6 +8,7 @@ import {
   close_icon,
   open_button,
   open_icon,
+  MemoryDrawer
 } from './styles'
 
 class Memory extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -23,7 +24,7 @@ class Memory extends React.Component { // eslint-disable-line react/prefer-state
 
   render() {
     return (
-      <div>
+      <MemoryDrawer>
          <RaisedButton
           icon={<PrevIcon style={close_icon} />}
           label="Memory"
@@ -48,7 +49,7 @@ class Memory extends React.Component { // eslint-disable-line react/prefer-state
           />
           {this.props.children}
         </Drawer>
-      </div>
+      </MemoryDrawer>
     );
   }
 }

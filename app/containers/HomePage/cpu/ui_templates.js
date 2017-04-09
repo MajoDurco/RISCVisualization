@@ -21,5 +21,5 @@ export function writeback_template(instruction, result, destination){
 }
 
 export function memRegChange(target){
-  return {name: target, animation_on: false} // target for register is name like R1 and for memory index
+  return {name: target} // target for register is name like R1 and for memory index
 }
