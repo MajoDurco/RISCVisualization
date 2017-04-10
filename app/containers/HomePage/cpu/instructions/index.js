@@ -1,5 +1,9 @@
 import ADD from './add'
 import AND from './and'
+import BEQ from './beq'
+import BGT from './bgt'
+import BLT from './blt'
+import BNE from './bne'
 import JMP from './jmp'
 import LOAD from './load'
 import MOV from './mov'
@@ -15,6 +19,10 @@ import XOR from './xor'
 export default {
   ADD,
   AND,
+  BEQ,
+  BGT,
+  BLT,
+  BNE,
   JMP,
   LOAD,
   MOV,

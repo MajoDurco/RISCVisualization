@@ -71,7 +71,7 @@ export function verifyInstructions(instructions, rules=INSTRUCTIONS){
           annotations.push({line: line+1, text: `Wrong params for ${instruction_name} instruction`})
 			}
 			else { // wrong format of parameter
-				annotations.push({line: line+1, text: `Instruction ${instruction_name} uses ${rules[instruction_name]} params not ${instr.params.length}`})
+				annotations.push({line: line+1, text: `Instruction ${instruction_name} uses ${rules[instruction_name]} params, inserted are ${instr.params.length}`})
 			}
 		}
 		else { // unknown instuction

@@ -10,6 +10,10 @@ export const ANIMATION_ON_FALSE = 'app/HomePage/ANIMATION_ON_FALSE'
 export const INSTRUCTIONS = { 
 	ADD    : 3, // ADD {REG}{REG}{REG}
 	AND    : 3, // AND {REG}{REG}{REG}
+  BEQ    : 3, // BEQ {REG}{REG}{LINE/REG}
+  BGT    : 3, // BGT {REG}{REG}{LINE/REG}
+  BLT    : 3, // BLT {REG}{REG}{LINE/REG}
+  BNE    : 3, // BNE {REG}{REG}{LINE/REG}
 	JMP    : 1, // JMP {REG/LINE}
 	LOAD   : 2, // LOAD {REG}{MEM}
 	MOV    : 2, // MOV {MEM_INDEX}{VALUE}
