@@ -34,6 +34,9 @@ export const DATA_REGS = 16 // number of data registers
 export const INITVAL = "INIT"
 export const ENDVAL = "END"
 
+// empty line in editor
+export const EMPTY = "EMPTY"
+
 export const FIRST_OPERAND = 0
 export const SECOND_OPERAND = 1
 export const THIRD_OPERAND = 2

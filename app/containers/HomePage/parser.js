@@ -1,4 +1,4 @@
-import { INSTRUCTIONS } from './constants'
+import { INSTRUCTIONS, EMPTY } from './constants'
 import spec_instructions from './cpu/instructions/index'
 
 export default function getInstructions(text){
@@ -8,7 +8,8 @@ export default function getInstructions(text){
 		let verify = verifyInstructions(parsed_instructions)
 		if(!verify.valid)
 			return verify
-		parsed_instructions.unshift('') // add empty element to the beginning to have each instruction on the same index as on line in editor
+		parsed_instructions.unshift(EMPTY) // add empty element to the beginning to have each instruction on the same index as on line in editor
+    console.log(parsed_instructions)
 		return parsed_instructions
 }
 
@@ -24,8 +25,9 @@ export function parse(text){
 	const instruction_offset = 1
 	try{
 		if (!isEmpty(text)) {
-			let parsed = []
-			text.split('\n').map((line) => {
+      let parsed = []
+      // remove empty lines from beginning/end and split them at new line
+      text.trim().split('\n').map((line) => { 
 				if(!isEmpty(line)) // ignore empty lines
 				{
 					let space_splited = line.split(' ')
@@ -41,14 +43,17 @@ export function parse(text){
 						params:space_splited.slice(instruction_offset)
 					})
 				}
+        else { // line is empty
+          parsed.push(EMPTY)
+        }
 			})
 			return parsed
 		}
 		else
-			return null
+      return null // no text inserted
 	}
 	catch (err){ 
-		console.log(err)
+		console.error(err)
 	}
 	return null
 }	
@@ -61,6 +66,8 @@ export function parse(text){
 export function verifyInstructions(instructions, rules=INSTRUCTIONS){
 	let annotations = []
 	instructions.forEach((instr, line) => {
+    if(instr === EMPTY)
+      return // dont check empty lines
 		const instruction_name = instr.instruction.toUpperCase()
 		if(instruction_name in rules){ 
 			if(instr.params.length === rules[instruction_name]) {

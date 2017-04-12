@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 
-import { INITVAL, ENDVAL, INIT_STATE } from '../constants'
+import { INITVAL, ENDVAL, INIT_STATE, EMPTY } from '../constants'
 import instCode from './instructions/index'
 import { memRegChange } from './ui_templates'
 
@@ -28,13 +28,20 @@ export default function cpu(instructions){
       console.error("RUNTIME ERROR!!!", err)
       break
     }
-    allStates.push(Immutable.fromJS({ 
+    if(!should_inc_PC){ // only when jumping, check if jump destination is not EMPTY line, if so skip this and dont need to push this state
+      if(handleEmptyLineJump(instructions, registers)){
+        console.log("skipping empty lines")
+        incrementPC(instructions, registers, pipeline, ui, should_inc_PC)
+        continue // skip empty lines
+      }
+    }
+    allStates.push(Immutable.fromJS({  // save state
       pipe: pipeline.pipeline_state.pipe,
       registers, 
       memory,
       ui: ui.ui,
     }))
-    ui.clearUi()
+    ui.clearUi() // init ui for next cycle, fresh one
     let should_continue = incrementPC(instructions, registers, pipeline, ui, should_inc_PC)
     if(!should_continue)
       break
@@ -75,8 +82,7 @@ function Pipeline(){
  * @return {Object} - return all registers(date_regs, state_regs) in one object 
  */
 function Registers(){
-  let registers = INIT_STATE.get('registers').toJS()
-  return registers
+  return INIT_STATE.get('registers').toJS()
 }
 
 /*
@@ -93,7 +99,7 @@ function nextStep(instructions, registers, pipeline, ui, memory){
   let should_inc_PC = true
   // execute instruction in pipeline
   pipeline.pipeline_state.pipe.forEach((instruction, index) => {
-    if(instruction !== INITVAL && instruction !== ENDVAL) {
+    if(instruction !== INITVAL && instruction !== ENDVAL && instruction !== EMPTY) {
       const inst_functions = instCode[instruction.instruction]
       const functions = [inst_functions.fetch, inst_functions.decode, inst_functions.execute, inst_functions.memaccess, inst_functions.writeback]
       if (index === 4) { // writeback
@@ -147,30 +153,55 @@ function handleJumps(instruction, instructions_len, registers, pipeline, ui, mem
 }
 
 /*
- * @desc - increment PC which points on next instruction 
+ * @desc - increment PC which points on next instruction and push new instruction into pipeline
  * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
  * represents parsed instructions from editor, index === editor line
  * @param {Object} registers - ref to Registers object
  * @param {Object} pipeline - ref to Pipeline object
  * @param {Object} ui - ref to Ui object
- * @return {Boolean} - indicator of the end of calcutation, false === end
+ * @return {Boolean} - indicator of the end of computation, false === end
  */
 function incrementPC(instructions, registers, pipeline, ui, should_inc_PC){
+  let new_index = registers.PC.value
   if(should_inc_PC)
-    registers.PC.value += 1 
-  // PC max val is last line(instruction)
-  // move next instruction into the pipeline
-  if(registers.PC.value >= instructions.length) {
-    registers.PC.value -= 1
+      new_index = getNewPCIndex(instructions, registers.PC.value)
+
+  // PC is fine and poiting on next instruction, if jump is used PC is not updated and has old value
+  if(new_index) {    
+    registers.PC.value = new_index
+    ui.addTo(memRegChange('PC'), 'reg_changes')
+    pipeline.pushInstructionIn(instructions[registers.PC.value])
+  }
+  else { // end of instructions no more to process start pushing ENDVAL
     pipeline.pushInstructionIn(ENDVAL)
     if (pipeline.pipeline_state.pipe.every((instruction) => instruction === ENDVAL))
       return false // pipeline is empty
   }
-  else {
-    ui.addTo(memRegChange('PC'), 'reg_changes')
-    pipeline.pushInstructionIn(instructions[registers.PC.value])
+  return true // keep going
+}
+
+function getNewPCIndex(instructions, actual_index){
+  let next_index = null
+  console.log("getnextindex called with", instructions, actual_index)
+  for(let i=actual_index; i<instructions.length; i++){
+    if (i === actual_index) // skip actual index want to move
+      continue
+    if(typeof instructions[i] === 'object'){
+      console.log("next PC index is", i)
+      next_index = i
+      break
+    }
   }
-  return true
+  if(next_index === null)
+    return false
+  console.log("returning PC index")
+  return next_index
+}
+
+function handleEmptyLineJump(instructions, registers){
+  if(instructions[registers.PC.value] === EMPTY)
+    return true
+  return false
 }
 
 /*
