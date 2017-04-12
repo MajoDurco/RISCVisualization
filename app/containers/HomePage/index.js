@@ -31,6 +31,7 @@ import MemoryState from '../../components/MemoryState/index'
 import Pipeline from '../../components/Pipeline/index'
 import Registers from '../../components/Registers/index'
 import StateLine from '../../components/StateLine/index'
+import ColumnNoPadding from '../../components/ColumnNoPadding/index'
 
 export class HomePage extends React.PureComponent {
 
@@ -112,9 +113,9 @@ export class HomePage extends React.PureComponent {
       <NotificationSystem ref="notificationSystem" />
       <div>
         <Row debug={true}>
-          <Column md={5} lg={3}>
+          <ColumnNoPadding md={5} lg={3}>
             <Editor run={this.run.bind(this)} />
-          </Column>
+          </ColumnNoPadding>
           <Column md={7} lg={9}>
             <Row debug={true}>
               <Column>

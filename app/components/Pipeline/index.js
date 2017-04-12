@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
+import Header from '../SectionHeader/index'
 import {
   Cell,
   Empty,
@@ -72,9 +73,15 @@ class Pipeline extends React.PureComponent {
         )
     })
     return (
-      <PipeContainer>
-        {pipe_state}
-      </PipeContainer>
+      <div>
+        <Header 
+          message="Pipeline" 
+          size="150%"
+        />
+        <PipeContainer>
+          {pipe_state}
+        </PipeContainer>
+      </div>
     )
   }
 }

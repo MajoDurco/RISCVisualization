@@ -4,13 +4,10 @@ import styled from 'styled-components'
 import { Row, Column } from 'hedron'
 
 import NamedDiv from '../NamedDiv/index'
-import { pulse } from '../animations'
-import { ANIMATION_DURATION } from '../../containers/HomePage/constants'
+import Header from '../SectionHeader/index'
 
 const RegContext = styled.div`
-  animation-name: ${props => props.animation ? `${pulse}` : `none`};
-  animation-duration: ${ANIMATION_DURATION}s;
-  background-color: ${props => props.change ? `lightblue` : `none`};
+  // background-color: ${props => props.change ? `lightblue` : `none`};
 `
 
 class Registers extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -27,15 +24,15 @@ class Registers extends React.Component { // eslint-disable-line react/prefer-st
     const name = register[0]
     const value = register[1].value
     const changed = this.isChanged(name)
-    console.log("Reg changed", changed)
     const animation = changed && this.props.animationOn
     return (
     <Column lg={1} md={2} sm={2} xs={4} key={name}>
-      <NamedDiv header={name}>
-        <RegContext 
-          change={changed} 
-          animation={animation}
-        >
+      <NamedDiv 
+        header={name}
+        animation={animation}
+        changed={changed} 
+      >
+        <RegContext>
           <span>{value}</span>
         </RegContext>
       </NamedDiv>
@@ -43,9 +40,15 @@ class Registers extends React.Component { // eslint-disable-line react/prefer-st
     )
   })
   return (
-    <Row debug={true}>
-      {registers}
-    </Row>
+    <div>
+      <Header 
+        message="Registers" 
+        size="150%" 
+      />
+      <Row debug={true}>
+        {registers}
+      </Row>
+    </div>
   );
   }
 }

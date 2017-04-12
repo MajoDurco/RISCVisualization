@@ -1,14 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
+import { namedDivHeadAni, namedDivBodyAni } from '../animations'
+import { ANIMATION_DURATION } from '../../containers/HomePage/constants'
 
 const Panel = styled.div`
- // box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
- // -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
  padding: 5px;
 `
 
 const PanelHeader = styled.div`
-  background: ${props => props.background_color};
+  animation-name: ${props => props.animation ? `${namedDivHeadAni}` : `none`};
+  animation-duration: ${ANIMATION_DURATION}s;
+  background: ${props => props.changed ? `lightblue` : props.background_color};
+
   border: 1px solid ${props => props.border_color};
   border-bottom: none;
   border-top-left-radius: 5px;
@@ -27,7 +30,10 @@ const PanelHeader = styled.div`
 `
 
 const PanelContent = styled.div`
-  background: ${(props) => props.background_color};
+  animation-name: ${props => props.animation ? `${namedDivBodyAni}` : `none`};
+  animation-duration: ${ANIMATION_DURATION}s;
+
+  background: ${props => props.changed ? `lightblue` : props.background_color};
   border: 1px solid ${props => props.border_color};
   border-radius: 0 5px 5px 5px;
   padding: 5px;
@@ -44,13 +50,19 @@ class NamedDiv extends React.PureComponent {
     const border_color = this.props.border_color ? this.props.border_color : '#0076e5'
     return (
       <Panel>
-        <PanelHeader background_color={background_color} 
+        <PanelHeader 
+          animation={this.props.animation}
+          background_color={background_color} 
           border_color={border_color}
+          changed={this.props.changed}
         >
           <p>{this.props.header}</p>
         </PanelHeader>
-        <PanelContent background_color={background_color} 
+        <PanelContent 
+          animation={this.props.animation}
+          background_color={background_color} 
           border_color={border_color}
+          changed={this.props.changed}
         >
           {this.props.children}
         </PanelContent>
@@ -63,7 +75,9 @@ NamedDiv.propTypes = {
   background_color: React.PropTypes.string,
   border_color: React.PropTypes.string,
   children: React.PropTypes.element.isRequired,
-  header: React.PropTypes.string
+  header: React.PropTypes.string,
+  animation: React.PropTypes.bool,
+  changed: React.PropTypes.bool
 }
 
 export default NamedDiv

@@ -1,10 +1,18 @@
-import React from 'react';
 import AceEditor from 'react-ace'
-import styled from 'styled-components'
-import RaisedButton from 'material-ui/RaisedButton'
 import PlayCircle from 'material-ui/svg-icons/av/play-circle-outline'
-
+import RaisedButton from 'material-ui/RaisedButton'
+import React from 'react';
+import styled from 'styled-components'
 import 'brace/theme/monokai'
+
+import HoverDiv from '../HoverDiv/index.js'
+import SectionHeader from '../SectionHeader/index'
+
+const EditorHeader = styled.div`
+  padding-right: 5%;
+  display: flex;
+  justify-content: space-between;
+`
 
 var TEXT = ""
 
@@ -19,6 +27,10 @@ class Editor extends React.Component {
 
     return (
       <div>
+        <EditorHeader>
+          <SectionHeader message="Editor" size="150%" />
+          <HoverDiv />
+        </EditorHeader>
         <AceEditor 
           className="editor"
           theme="monokai"
@@ -35,7 +47,7 @@ class Editor extends React.Component {
           onClick={() => this.props.run(TEXT)}
         />
       </div>
-    );
+    )
   }
 }
 

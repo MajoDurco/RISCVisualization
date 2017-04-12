@@ -9,6 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import NextIcon from 'material-ui/svg-icons/navigation/chevron-right'
 import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left'
 
+import Header from '../SectionHeader/index'
 import {Center, StepsContainer } from './centerDivElements'
 /*
  * @desc renders stateline which represents all state of simulation
@@ -68,6 +69,10 @@ class StateLine extends React.Component {
 
 	return (
 		<div>
+      <Header 
+        message="States"
+        size="150%"
+      />
 			{buttons}
 			{this.renderText()}
 		</div>

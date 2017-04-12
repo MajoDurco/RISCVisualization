@@ -21,8 +21,8 @@ export const INSTRUCTIONS = {
   NOR    : 3, // NOR {REG}{REG}{REG}
 	OR     : 3, // OR {REG}{REG}{REG}
 	STORE  : 2, // STORE {MEM}{REG}
-	SHIFTL : 3, // SHIFTL {REG}
-	SHIFTR : 3, // SHIFTR {REG}
+	SHIFTL : 3, // SHIFTL {REG}{REG}{REG}
+	SHIFTR : 3, // SHIFTR {REG}{REG}{REG}
 	SUB    : 3, // SUB {REG}{REG}{REG}
   XOR    : 3, // XOR {REG}{REG}{REG}
 }

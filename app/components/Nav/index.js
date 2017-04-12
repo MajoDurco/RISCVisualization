@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { media } from '../media.js'
 import cpu from './cpu.png'
 import { Link } from 'react-router'
+import Header from '../SectionHeader/index'
 
 const Navig = styled.div`
 	margin: 0;
@@ -39,7 +40,7 @@ function Nav() {
 		<Navig>
 			<NavLink to='/'>
 				<ImgCpu src={cpu} />
-				<h3>RISC Visualization Tool</h3>
+        <Header message="RISC Visualization Tool" />
 			</NavLink>
 		</Navig>
   );
