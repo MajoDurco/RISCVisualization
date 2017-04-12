@@ -1,7 +1,7 @@
 # RISCViusalization
 Web RISC Visualization
 
-## Install
+## Install & Start
 ```
 npm install
 npm start
