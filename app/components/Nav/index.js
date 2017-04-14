@@ -13,7 +13,7 @@ const Navig = styled.div`
 
 	& * {
 		display: inline;
-		height: 50px;
+		height: 40px;
 		width: 50px;
 
 		${media.tablet`
@@ -29,6 +29,7 @@ const Navig = styled.div`
 
 const ImgCpu = styled.img`
 	margin: 0 20px;
+  vertical-align: top;
 `
 
 const NavLink = styled(Link)`

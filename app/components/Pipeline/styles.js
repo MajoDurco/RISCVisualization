@@ -7,11 +7,12 @@ import { ANIMATION_DURATION } from '../../containers/HomePage/constants'
 export const SHORTEN_STAGES = "800px"
 export const LOW_RESOLUTION = "375px"
 export const LOW_RES_WIDTH = "11%"
+export const HOVER_DIV_BREAK = "500px"
 
 export const Cell = styled.div`
   animation-name: ${props => props.animation ? `${pulse}` : "none"};
   animation-duration: ${ANIMATION_DURATION}s;
-  background: ${props => props.activeIndex ? "lightblue" : "none"};
+  background: ${props => props.activeIndex ? "#94f7ed" : "none"};
   border: 1px solid;
   border-left: ${props => props.position === "first" ? "1px solid" : "none"};
   border-right: ${props => props.position === "last" ? "1px solid" : "none"};
@@ -35,6 +36,23 @@ export const Empty = styled.div`
 
 export const PipeRow = styled(Row)`
   margin-bottom: -1px;
+  position: relative;
+  cursor: pointer;
+
+  div:last-child {
+    display: none; 
+  }
+
+  &:hover div:last-child {
+    background: #fff;
+    display: block;
+    height: auto;
+    left: 41%;
+    position: absolute;
+    top: 105%;
+    width: auto;
+    z-index: 1;
+  }
 `
 
 export const Stage = styled.p`

@@ -5,7 +5,7 @@ import React from 'react';
 import styled from 'styled-components'
 import 'brace/theme/monokai'
 
-import HoverDiv from '../HoverDiv/index.js'
+import InstructionDiv from '../InstructionDiv/index.js'
 import SectionHeader from '../SectionHeader/index'
 
 const EditorHeader = styled.div`
@@ -29,7 +29,7 @@ class Editor extends React.Component {
       <div>
         <EditorHeader>
           <SectionHeader message="Editor" size="150%" />
-          <HoverDiv />
+          <InstructionDiv />
         </EditorHeader>
         <AceEditor 
           className="editor"

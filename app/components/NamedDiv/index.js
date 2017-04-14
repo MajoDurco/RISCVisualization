@@ -10,7 +10,7 @@ const Panel = styled.div`
 const PanelHeader = styled.div`
   animation-name: ${props => props.animation ? `${namedDivHeadAni}` : `none`};
   animation-duration: ${ANIMATION_DURATION}s;
-  background: ${props => props.changed ? `lightblue` : props.background_color};
+  background: ${props => props.changed ? "#94f7ed" : props.background_color};
 
   border: 1px solid ${props => props.border_color};
   border-bottom: none;
@@ -33,7 +33,7 @@ const PanelContent = styled.div`
   animation-name: ${props => props.animation ? `${namedDivBodyAni}` : `none`};
   animation-duration: ${ANIMATION_DURATION}s;
 
-  background: ${props => props.changed ? `lightblue` : props.background_color};
+  background: ${props => props.changed ? "#94f7ed" : props.background_color};
   border: 1px solid ${props => props.border_color};
   border-radius: 0 5px 5px 5px;
   padding: 5px;

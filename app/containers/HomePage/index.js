@@ -112,28 +112,28 @@ export class HomePage extends React.PureComponent {
     <div>
       <NotificationSystem ref="notificationSystem" />
       <div>
-        <Row debug={true}>
+        <Row>
           <ColumnNoPadding md={5} lg={3}>
             <Editor run={this.run.bind(this)} />
           </ColumnNoPadding>
           <Column md={7} lg={9}>
-            <Row debug={true}>
-              <Column>
+            <Row>
+              <ColumnNoPadding>
                 <Pipeline 
                   pipe_state={this.props.pipeState}
                   activeIndex={this.props.stateLineIndex}
                   animationOn={this.props.animationOn}
                 />
-              </Column>
+              </ColumnNoPadding>
             </Row>
-            <Row debug={true}>
-              <Column>
+            <Row>
+              <ColumnNoPadding>
                 <Registers 
                   reg_state={this.props.regState} 
                   ui={this.props.ui}
                   animationOn={this.props.animationOn}
                 />
-              </Column>
+              </ColumnNoPadding>
             </Row>
           </Column>
         </Row>

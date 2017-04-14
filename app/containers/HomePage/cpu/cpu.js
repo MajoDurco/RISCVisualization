@@ -29,10 +29,9 @@ export default function cpu(instructions){
       break
     }
     if(!should_inc_PC){ // only when jumping, check if jump destination is not EMPTY line, if so skip this and dont need to push this state
-      if(handleEmptyLineJump(instructions, registers)){
-        console.log("skipping empty lines")
-        incrementPC(instructions, registers, pipeline, ui, should_inc_PC)
-        continue // skip empty lines
+      if(handleEmptyLineJump(instructions, registers)){ // only if under PC is EMPTY line skip it
+        incrementPC(instructions, registers, pipeline, ui, should_inc_PC) // push next instruction into pipeline
+        continue // skip empty line
       }
     }
     allStates.push(Immutable.fromJS({  // save state
@@ -180,6 +179,13 @@ function incrementPC(instructions, registers, pipeline, ui, should_inc_PC){
   return true // keep going
 }
 
+/*
+ * @desc - calculate new PC index based on actual position, skipping empty lines
+ * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
+ * represents parsed instructions from editor, index === editor line
+ * @param {Number} actual_index - actual PC value
+ * @return {Boolean/Number} - end of instrustion array(false) of next index for PC
+ */
 function getNewPCIndex(instructions, actual_index){
   let next_index = null
   console.log("getnextindex called with", instructions, actual_index)
@@ -187,17 +193,22 @@ function getNewPCIndex(instructions, actual_index){
     if (i === actual_index) // skip actual index want to move
       continue
     if(typeof instructions[i] === 'object'){
-      console.log("next PC index is", i)
       next_index = i
       break
     }
   }
   if(next_index === null)
     return false
-  console.log("returning PC index")
   return next_index
 }
 
+/*
+ * @desc - check if actual instruction on which PC points is EMPTY line
+ * @param { {instruction: String, params: String[]}[] } instructions - array of objects which
+ * represents parsed instructions from editor, index === editor line
+ * @param {Object} registers - ref to Registers object
+ * @return {Boolean} - Empty(true)
+ */
 function handleEmptyLineJump(instructions, registers){
   if(instructions[registers.PC.value] === EMPTY)
     return true

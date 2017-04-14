@@ -1,9 +1,9 @@
 // import React from 'react';
 // import { shallow } from 'enzyme';
 
-// import PipeHoverDiv from '../index';
+// import HoverDiv from '../index';
 
-describe('<PipeHoverDiv />', () => {
+describe('<HoverDiv />', () => {
   it('Expect to have unit tests specified', () => {
     expect(true).toEqual(false);
   });

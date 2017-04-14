@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import styled from 'styled-components'
 import {
 	Step,
 	Stepper,
@@ -11,6 +12,20 @@ import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left'
 
 import Header from '../SectionHeader/index'
 import {Center, StepsContainer } from './centerDivElements'
+
+const StateText = styled.div`
+  columns: 2 300px;
+  column-rule: 2px solid #ccc;
+  p {
+    margin: 0 25px;
+    display: list-item;
+    font-size: 125%;
+  }
+`
+const NotInitStatement = styled.h1`
+  text-align: center;
+`
+
 /*
  * @desc renders stateline which represents all state of simulation
  */
@@ -22,7 +37,7 @@ class StateLine extends React.Component {
 		))
 		if (messages.length === 0)
 			return ""
-    return _.reverse(messages) // reverses array to be describing states from top of pipeline to the bottom
+    return messages 
 	}
 
   render() {
@@ -65,7 +80,7 @@ class StateLine extends React.Component {
 			)
 	}
 	else 
-		buttons = <h2>Not Initialized StateLine yet!</h2>
+    buttons = <NotInitStatement>Run the Visualization to see all possible states!</NotInitStatement>
 
 	return (
 		<div>
@@ -74,7 +89,9 @@ class StateLine extends React.Component {
         size="150%"
       />
 			{buttons}
-			{this.renderText()}
+      <StateText>
+        {this.renderText()}
+      </StateText>
 		</div>
     )
   }
