@@ -58,7 +58,7 @@ class Registers extends React.Component { // eslint-disable-line react/prefer-st
           </NamedDiv>
           {hover 
             ? <HoverDiv>
-                <ConversionHeader>Decimal:</ConversionHeader>
+                <ConversionHeader>Binary:</ConversionHeader>
                 <ConversionValue>{value.toString(2)}</ConversionValue>
                 <ConversionHeader>Hex:</ConversionHeader>
                 <ConversionValue>{value.toString(16)}</ConversionValue>

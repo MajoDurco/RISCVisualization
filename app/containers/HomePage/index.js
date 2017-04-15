@@ -8,7 +8,9 @@ import {
   openMemoryDrawer,
   setStateLineIndex,
   updateCpuState,
+  codeSampleChanged,
 } from './actions' 
+
 import { 
   animationOn,
   animationSelector,
@@ -19,6 +21,7 @@ import {
   regSelector,
   stateLineIndexSelector,
   uiSelector,
+  codeSampleSelector,
 } from './selectors'
 import getInstructions from './parser'
 import cpu from './cpu/cpu'
@@ -114,7 +117,11 @@ export class HomePage extends React.PureComponent {
       <div>
         <Row>
           <ColumnNoPadding md={5} lg={3}>
-            <Editor run={this.run.bind(this)} />
+            <Editor 
+              run={this.run.bind(this)} 
+              code_sample={this.props.codeSample}
+              code_sample_change={(value) => this.props.codeSampleChanged(value)}
+            />
           </ColumnNoPadding>
           <Column md={7} lg={9}>
             <Row>
@@ -175,6 +182,7 @@ const mapStateToProps = createStructuredSelector({
   animation      : animationSelector,
   animationOn    : animationOn,
   baseState      : baseHomeSelector,
+  codeSample     : codeSampleSelector,
   memDrawerOpen  : memDrawerOpenSelector,
   memory         : memorySelector,
   pipeState      : pipeSelector,
@@ -188,6 +196,7 @@ function mapDispatchToProps(dispatch){
     openMemoryDrawer: (open)    => dispatch(openMemoryDrawer(open)),
     setStateLineIndex: (index)  => dispatch(setStateLineIndex(index)),
     updateCpuState: (cpu_state) => dispatch(updateCpuState(cpu_state)),
+    codeSampleChanged: (value)  => dispatch(codeSampleChanged(value)),
   }
 }
 

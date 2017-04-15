@@ -239,6 +239,7 @@
     "lodash": "^4.17.4",
     "material-ui": "^0.17.1",
     "minimist": "1.2.0",
+    "prop-types": "^15.5.8",
     "react": "^15.5.3",
     "react-ace": "^4.1.6",
     "react-bootstrap": "^0.30.8",

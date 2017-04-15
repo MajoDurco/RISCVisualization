@@ -1,5 +1,16 @@
 import { createSelector } from 'reselect'
 
+/*
+ * State tree:
+ *   home: {
+ *     cpu: {...}<Immutable>
+ *     animation: {...}<Immutable>
+ *     stateLine: {...}<Immutable>
+ *     memoryTab: {...}<Immutable>
+ *     editor: {...}<Immutable>
+ *   }<Immutable>
+ */
+
 const homeSelector = (state) => state.get('home')
 // 'home' is defined in ~(projectHome)/app/routes.js in injectingReducer
 
@@ -12,7 +23,6 @@ export const baseHomeSelector = createSelector(
 export const cpuSelector = createSelector(
 	homeSelector,
   (home_page) => {
-    console.log("HOME selector")
     return home_page.get('cpu')
   }
 )
@@ -68,4 +78,15 @@ export const animationSelector = createSelector(
 export const animationOn = createSelector(
 	animationSelector,
 	(animation) => animation.get('on')
+)
+
+// EDITOR
+export const editorSelector = createSelector(
+	homeSelector,
+	(home) => home.get('editor')
+)
+
+export const codeSampleSelector = createSelector(
+  editorSelector,
+	(editor) => editor.get('code_sample')
 )

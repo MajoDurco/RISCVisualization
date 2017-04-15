@@ -6,6 +6,7 @@ export const SET_STATE_LINE_INDEX = 'app/HomePage/SET_STATE_LINE_INDEX'
 export const SET_OPEN_MEM_DRAWER = 'app/HomePage/SET_OPEN_MEM_DRAWER'
 export const ANIMATION_ON_TRUE = 'app/HomePage/ANIMATION_ON_TRUE'
 export const ANIMATION_ON_FALSE = 'app/HomePage/ANIMATION_ON_FALSE'
+export const CODE_SAMPLE_CHANGED = 'app/HomePage/CODE_SAMPLE_CHANGED'
 
 export const INSTRUCTIONS = { 
 	ADD    : 3, // ADD {REG}{REG}{REG}

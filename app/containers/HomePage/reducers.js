@@ -2,6 +2,7 @@ import { fromJS } from 'immutable'
 import { combineReducers } from 'redux-immutable'
 
 import { 
+  CODE_SAMPLE_CHANGED,
 	INIT_STATE,
 	SET_STATE_LINE_INDEX,
 	SET_OPEN_MEM_DRAWER,
@@ -64,11 +65,25 @@ function memoryTab(state = initial_memory_state, action) {
 	}
 }
 
+const initial_editor_state = fromJS({
+	code_sample: 'default'
+})
+
+function editor(state= initial_editor_state, action){
+  switch (action.type){
+    case CODE_SAMPLE_CHANGED:
+      return state.set('code_sample', action.value)
+    default: 
+      return state
+  }
+}
+
 const home_page_reducers = combineReducers({ 
 	cpu: cpuReducer,
 	animation,
 	stateLine,
 	memoryTab,
+  editor,
 })
 
 export default home_page_reducers

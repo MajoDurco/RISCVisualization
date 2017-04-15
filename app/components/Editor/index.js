@@ -1,12 +1,15 @@
 import AceEditor from 'react-ace'
 import PlayCircle from 'material-ui/svg-icons/av/play-circle-outline'
 import RaisedButton from 'material-ui/RaisedButton'
-import React from 'react';
+import DropDownMenu from 'material-ui/DropDownMenu'
+import MenuItem from 'material-ui/MenuItem'
+import React from 'react'
 import styled from 'styled-components'
 import 'brace/theme/monokai'
 
 import InstructionDiv from '../InstructionDiv/index.js'
 import SectionHeader from '../SectionHeader/index'
+import code_samples from './samples'
 
 const EditorHeader = styled.div`
   padding-right: 5%;
@@ -18,17 +21,41 @@ var TEXT = ""
 
 class Editor extends React.Component {
 
-  shouldComponentUpdate(){
-  return false
+  shouldComponentUpdate(next_props){
+    if(this.props.code_sample !== next_props.code_sample)
+      return true
+    return false
   }
 
   render() {
-		const defVal = `add R1 R2 R3 ${'\n'}`
-
     return (
       <div>
         <EditorHeader>
-          <SectionHeader message="Editor" size="150%" />
+          <SectionHeader 
+            message="Editor"
+            size="150%"
+          />
+          <DropDownMenu 
+            onChange={(event, index, value) => { 
+              this.props.code_sample_change(value)
+              if(this.props.code_sample !== value) // if choosen the same option dont change TEXT
+                TEXT = code_samples[value]
+            }}
+            value={this.props.code_sample}
+          >
+            <MenuItem 
+              value={'default'}
+              primaryText='Choose Example Code' 
+            />
+            <MenuItem 
+              value={'simple'}
+              primaryText='Simple'
+            />
+            <MenuItem 
+              value={'empty'}
+              primaryText='Empty'
+            />
+          </DropDownMenu>
           <InstructionDiv />
         </EditorHeader>
         <AceEditor 
@@ -36,8 +63,7 @@ class Editor extends React.Component {
           theme="monokai"
           fontSize={20}
           onChange={(text) => {TEXT = text}}
-          onLoad={() => {TEXT = defVal}}
-          defaultValue={defVal}
+          value={code_samples[this.props.code_sample]}
           editorProps={{$blockScrolling: true}}
         />
         <RaisedButton
@@ -52,7 +78,9 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
-	run: React.PropTypes.func.isRequired
+	run: React.PropTypes.func.isRequired,
+  code_sample: React.PropTypes.string,
+  code_sample_change: React.PropTypes.func
 };
 
 export default Editor;
