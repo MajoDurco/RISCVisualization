@@ -1,10 +1,10 @@
 {
-  "name": "ReactStarterKit",
+  "name": "RISCVisualization",
   "version": "1.0.0",
-  "description": "based on react-boilerplate from Max Stoiber git://github.com/react-boilerplate/react-boilerplate.git",
+  "description": "Visualization of RISC pipeline",
   "repository": {
     "type": "git",
-    "url": "git@github.com:MajoDurco/ReactStarterKit.git"
+    "url": "git@github.com:MajoDurco/RISCVisualization.git"
   },
   "engines": {
     "npm": ">=3",
