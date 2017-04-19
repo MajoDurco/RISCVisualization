@@ -14,6 +14,9 @@ export default function cpu(instructions){
   const ui = UserInterface()
   let memory = INIT_STATE.get('memory').toJS() //[0,0....0].length === 32 console.log(memory)
 
+  const jumps_treshold = 1000
+  let PC_jumps = {}
+
   let allStates = []
 
   registers.R2.value = 2 // TODO REMOVE
@@ -22,6 +25,8 @@ export default function cpu(instructions){
     let should_inc_PC;
     try {
       should_inc_PC = nextStep(instructions, registers, pipeline, ui, memory) 
+      if(!should_inc_PC)// only when jumping
+        handleMaxJumps(PC_jumps, jumps_treshold, registers)
     }
     catch (err) { // runtime error
       runtimeErrHandler(ui, err)
@@ -29,10 +34,12 @@ export default function cpu(instructions){
       break
     }
     if(!should_inc_PC){ // only when jumping, check if jump destination is not EMPTY line, if so skip this and dont need to push this state
-      if(handleEmptyLineJump(instructions, registers)){ // only if under PC is EMPTY line skip it
-        incrementPC(instructions, registers, pipeline, ui, should_inc_PC) // push next instruction into pipeline
-        continue // skip empty line
-      }
+      // if(handleEmptyLineJump(instructions, registers)){ // only if under PC is EMPTY line skip it
+        // incrementPC(instructions, registers, pipeline, ui, should_inc_PC) // skip empty instrucion
+        // incrementPC(instructions, registers, pipeline, ui, true) // skip empty pipe state
+      // } 
+      incrementPC(instructions, registers, pipeline, ui, should_inc_PC) // skip empty instruction or empty pipeline
+      continue
     }
     allStates.push(Immutable.fromJS({  // save state
       pipe: pipeline.pipeline_state.pipe,
@@ -125,27 +132,26 @@ function nextStep(instructions, registers, pipeline, ui, memory){
  * @param {Array<Number>} memory - memory array
  * @param {Function(instruction, registers, ui, memory)} exec_function - jump execution function(writeback)
  * @return {Boolean} - if should PC increment
+ * @throws {String} - when jump destination is unreachable
  */
 function handleJumps(instruction, instructions_len, registers, pipeline, ui, memory, exec_function){
   let should_inc_PC = true
-  const jumpExecute = exec_function(instruction, registers, ui, memory)
+  const jumpExecute = exec_function(instruction, registers, ui, memory) // execute jump and move PC
   if(instruction.instruction === "JMP"){
     //check if jump destination is correct
-    if(registers.PC.value >= instructions_len || registers.PC.value <= 0){
+    if(registers.PC.value >= instructions_len || registers.PC.value <= 0)
       throw(`Cannot jump to line ${registers.PC.value}!`)
-    }
     should_inc_PC = false
     ui.removeAllFromStateLineExceptLast() // remove all mesages except jump one
     pipeline.init()
   }
   else { // branch jumps
     if(jumpExecute === true) {  // branch condition is true
-      if(registers.PC.value >= instructions_len || registers.PC.value <= 0){
+      if(registers.PC.value >= instructions_len || registers.PC.value <= 0)
         throw(`Cannot jump to line ${registers.PC.value}!`)
-      }
-    should_inc_PC = false
-    ui.removeAllFromStateLineExceptLast() // remove all mesages except jump one
-    pipeline.init()
+      should_inc_PC = false
+      ui.removeAllFromStateLineExceptLast() // remove all mesages except jump one
+      pipeline.init()
     }
   }
   return should_inc_PC
@@ -188,7 +194,6 @@ function incrementPC(instructions, registers, pipeline, ui, should_inc_PC){
  */
 function getNewPCIndex(instructions, actual_index){
   let next_index = null
-  console.log("getnextindex called with", instructions, actual_index)
   for(let i=actual_index; i<instructions.length; i++){
     if (i === actual_index) // skip actual index want to move
       continue
@@ -210,9 +215,7 @@ function getNewPCIndex(instructions, actual_index){
  * @return {Boolean} - Empty(true)
  */
 function handleEmptyLineJump(instructions, registers){
-  if(instructions[registers.PC.value] === EMPTY)
-    return true
-  return false
+  return instructions[registers.PC.value] === EMPTY ? true : false
 }
 
 /*
@@ -261,4 +264,26 @@ function UserInterface(){
 function runtimeErrHandler(ui, message){
   ui.clearSpecificUiMember('state_line_msg')
 	ui.addTo(`Runtime Error Occured: ${message}`, 'state_line_msg')
+}
+
+/*
+ * @desc - need to handle infinite loop caused by jumps by my own do not let browser say a word,
+ *   for each PC destination value has own counter and if the counter reach the threshold stop the execution
+ * @param {{PC_value: counter<Number>}} PC_jumps - object where each PC has own jump counter
+ * @param {Number} jumps_treshold - max jumps on the same destination, if reached stop program
+ * @param {Object} registers - ref to Registers object
+ * @throws {String} - when jump threshold is exceeded
+ */
+function handleMaxJumps(PC_jumps, jumps_treshold, registers){
+  const PC = registers.PC.value
+  if(PC in PC_jumps){ // jump was executed in past to the same destination
+    PC_jumps[PC] += 1
+  }
+  else {
+    PC_jumps[PC] = 1
+  }
+  for(let jump_counter in PC_jumps){
+    if(PC_jumps[jump_counter] >= jumps_treshold)
+      throw(`Jump exceeded ${jumps_treshold} jump threshold!`)
+  }
 }
