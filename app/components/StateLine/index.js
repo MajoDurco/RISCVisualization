@@ -20,6 +20,7 @@ const StateText = styled.div`
     margin: 0 25px;
     display: list-item;
     font-size: 125%;
+    page-break-inside: avoid;
   }
 `
 const NotInitStatement = styled.h1`

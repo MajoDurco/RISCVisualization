@@ -32,50 +32,55 @@ export function fetch(instruction, registers, ui){
 export function decode(instruction, registers, ui){
 	ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
-export function execute(instruction, registers, ui){
-  dataHazzardOccur(ui,
-  registers[instruction.params[FIRST_OPERAND]],
-  registers[instruction.params[SECOND_OPERAND]])
-  if(numberCheck(instruction.params[THIRD_OPERAND]) === false) // destiation register
-    dataHazzardOccur(ui, registers[instruction.params[FIRST_OPERAND]])
-	// log
-	ui.addTo(`Jump destination computed`, 'state_line_msg')
-}
-export function memaccess(instruction, registers, ui){
-	ui.addTo(ui_template.memaccess_template(instruction.instruction, false), 'state_line_msg')
-}
-// TODO check if jump execution is here and also where destination is checked
-export function writeback(instruction, registers, ui){
+export function execute(instruction, registers, ui, pipeline){
 	const first_op = registers[instruction.params[FIRST_OPERAND]].value
 	const second_op = registers[instruction.params[SECOND_OPERAND]].value
   const is_jumping = (first_op > second_op)
 
+  dataHazzardOccur(ui, registers,
+  instruction.params[FIRST_OPERAND],
+  instruction.params[SECOND_OPERAND])
+
   let dest = numberCheck(instruction.params[THIRD_OPERAND])
-  if(dest !== false) { // LINE
-    if(is_jumping){
-      registers.PC.value = dest
-      ui.addTo(`Jumped to ${dest} line, PC changed accordingly`, 'state_line_msg')
-      ui.addTo(ui_template.memRegChange('PC'), 'reg_changes')
-      return true
-    }
-    else {
-      ui.addTo(`${first_op} less or equal ${second_op}, jump is not executed`, 'state_line_msg')
-      return false
-    }
-  }
-  else { // REGISTER
-    if(is_jumping) {
+  if(is_jumping){
+    if(!dest) { // REGISTER
+      dataHazzardOccur(ui, registers, instruction.params[THIRD_OPERAND])
       dest = registers[instruction.params[FIRST_OPERAND]].value
-      registers.PC.value = dest
-      ui.addTo(`Jumped to ${dest} line from ${instruction.params[FIRST_OPERAND]} register, PC changed accordingly`, 'state_line_msg')
-      ui.addTo(ui_template.memRegChange('PC'), 'reg_changes')
-      return true
     }
-    else {
-      ui.addTo(`${first_op} less or equal ${second_op}, jump is not executed`, 'state_line_msg')
-      return false
-    }
-  } 
+    ui.addTo(`${instruction.instruction} instruction has calculated that ${instruction.params[FIRST_OPERAND]}(${first_op}) is greater then ${instruction.params[SECOND_OPERAND]}(${second_op}) so jump is going to be executed in next stage to  line ${dest}`, 'state_line_msg')
+    pipeline.stacks.branch_stack.push(dest)
+  }
+  else { // condition of false
+    ui.addTo(`${instruction.instruction} instruction has calculated that ${instruction.params[FIRST_OPERAND]}(${first_op}) is NOT greater then ${instruction.params[SECOND_OPERAND]}(${second_op}) so jump is NOT going to be executed`, 'state_line_msg')
+  }
+}
+export function memaccess(instruction, registers, ui, pipeline){
+	const first_op = registers[instruction.params[FIRST_OPERAND]].value
+	const second_op = registers[instruction.params[SECOND_OPERAND]].value
+  const is_jumping = (first_op > second_op)
+
+  if(is_jumping){
+    const dest = pipeline.stacks.branch_stack[0]
+    ui.addTo(`${instruction.instruction} instruction will jump to ${dest} line`, 'state_line_msg')
+  }
+  else 
+    ui.addTo(`${instruction.instruction} instruction won't jump, because branch condition was false`, 'state_line_msg')
+}
+export function writeback(instruction, registers, ui, pipeline){
+	const first_op = registers[instruction.params[FIRST_OPERAND]].value
+	const second_op = registers[instruction.params[SECOND_OPERAND]].value
+  const is_jumping = (first_op !== second_op)
+
+  if(is_jumping){
+    const dest = pipeline.stacks.branch_stack.shift()
+    registers.PC.value = dest
+    ui.addTo(ui_template.memRegChange('PC'), 'reg_changes')
+    ui.addTo(`${instruction.instruction} has jumped to line ${dest}, which PC register contains`, 'state_line_msg')
+  }
+  else
+    ui.addTo(`${instruction.instruction} has just passed through writeback, because branch condition was false`, 'state_line_msg')
+    
+  return is_jumping
 }
 
 export default {

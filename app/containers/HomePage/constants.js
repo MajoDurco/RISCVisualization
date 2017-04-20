@@ -42,6 +42,8 @@ export const FIRST_OPERAND = 0
 export const SECOND_OPERAND = 1
 export const THIRD_OPERAND = 2
 
+export const JUMP_TRESHOLD = 1000
+
 export const ANIMATION_DURATION = 1  // sec
 
 export const MEM_LENGTH = 32
@@ -50,23 +52,23 @@ const memory = _.range(MEM_LENGTH).map(() => 0)
 export const INIT_STATE = fromJS({
 	pipe: [INITVAL, INITVAL, INITVAL, INITVAL, INITVAL],
 	registers: {
-		R1: {value: 0, order: 1, lock: false},
-		R2: {value: 0, order: 2, lock: false},
-		R3: {value: 0, order: 3, lock: false},
-		R4: {value: 0, order: 4, lock: false},
-		R5: {value: 0, order: 5, lock: false},
-		R6: {value: 0, order: 6, lock: false},
-		R7: {value: 0, order: 7, lock: false},
-		R8: {value: 0, order: 8, lock: false},
-		R9: {value: 0, order: 9, lock: false},
-		R10: {value: 0, order: 10, lock: false},
-		R11: {value: 0, order: 11, lock: false},
-		R12: {value: 0, order: 12, lock: false},
-		R13: {value: 0, order: 13, lock: false},
-		R14: {value: 0, order: 14, lock: false},
-		R15: {value: 0, order: 15, lock: false},
-		R16: {value: 0, order: 16, lock: false},
-    PC: {value: 0, order: 99, lock: false},
+		R1: {value: 0, order: 1, lock: 0},
+		R2: {value: 0, order: 2, lock: 0},
+		R3: {value: 0, order: 3, lock: 0},
+		R4: {value: 0, order: 4, lock: 0},
+		R5: {value: 0, order: 5, lock: 0},
+		R6: {value: 0, order: 6, lock: 0},
+		R7: {value: 0, order: 7, lock: 0},
+		R8: {value: 0, order: 8, lock: 0},
+		R9: {value: 0, order: 9, lock: 0},
+		R10: {value: 0, order: 10, lock: 0},
+		R11: {value: 0, order: 11, lock: 0},
+		R12: {value: 0, order: 12, lock: 0},
+		R13: {value: 0, order: 13, lock: 0},
+		R14: {value: 0, order: 14, lock: 0},
+		R15: {value: 0, order: 15, lock: 0},
+		R16: {value: 0, order: 16, lock: 0},
+    PC: {value: 0, order: 99, lock: 0},
 	},
 	memory,
 	ui: {

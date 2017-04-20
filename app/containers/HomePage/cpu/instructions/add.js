@@ -23,24 +23,29 @@ export function fetch(instruction, registers, ui){
 export function decode(instruction, registers, ui){
 	ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
-export function execute(instruction, registers, ui){
-	ui.addTo(ui_template.execute_template(instruction, '+'), 'state_line_msg')
+export function execute(instruction, registers, ui, pipeline){
+	const first_reg = registers[instruction.params[SECOND_OPERAND]].value
+	const second_reg = registers[instruction.params[THIRD_OPERAND]].value
+  const result = first_reg + second_reg
+  pipeline.stacks.execute_stack.push(result) // push result into stack
+
+	ui.addTo(ui_template.execute_template(instruction, '+', result, first_reg, second_reg), 'state_line_msg')
 	// checking both operators for lock
-	dataHazzardOccur(ui,
-	registers[instruction.params[SECOND_OPERAND]],
-	registers[instruction.params[THIRD_OPERAND]])
+	dataHazzardOccur(ui, registers,
+	instruction.params[SECOND_OPERAND],
+	instruction.params[THIRD_OPERAND])
 	// locking destination
-	registers[instruction.params[FIRST_OPERAND]].lock = true
+	registers[instruction.params[FIRST_OPERAND]].lock += 1
 }
 export function memaccess(instruction, registers, ui){
 	ui.addTo(ui_template.memaccess_template(instruction.instruction, false), 'state_line_msg')
 }
-export function writeback(instruction, registers, ui){
-	const first_reg = registers[instruction.params[SECOND_OPERAND]].value
-	const second_reg = registers[instruction.params[THIRD_OPERAND]].value
-	registers[instruction.params[FIRST_OPERAND]].value = first_reg + second_reg
+export function writeback(instruction, registers, ui, pipeline){
+  // get result from execute
+  const result = pipeline.stacks.execute_stack.shift()
+	registers[instruction.params[FIRST_OPERAND]].value = result
 	// unlock destination
-	registers[instruction.params[FIRST_OPERAND]].lock = false
+	registers[instruction.params[FIRST_OPERAND]].lock -= 1
 	//log + ui
 	ui.addTo(ui_template.writeback_template(
 	instruction.instruction,

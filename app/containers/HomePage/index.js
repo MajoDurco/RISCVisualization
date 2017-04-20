@@ -25,10 +25,12 @@ import {
 } from './selectors'
 import getInstructions from './parser'
 import cpu from './cpu/cpu'
+import { JUMP_TRESHOLD } from './constants'
 
 // components
 import Editor from '../../components/Editor/index'
 import ErrNotification from '../../components/ErrNotification/index'
+import JumpTresholdExceeded from '../../components/JumpTresholdExceeded'
 import Memory from '../../components/Memory/index'
 import MemoryState from '../../components/MemoryState/index'
 import Pipeline from '../../components/Pipeline/index'
@@ -56,18 +58,24 @@ export class HomePage extends React.PureComponent {
         (<ErrNotification errors={processed_instructions.annotations} />)) 
       return
     }
-    //instructions are OK
-    this._clearNotifications()
-    this._addNotification(null, "Run succesful")
-
     //init stateline to index 0
     this.props.setStateLineIndex(0)
 
     this.arrState = cpu(processed_instructions)
+    if(this.arrState === null){ // infinite jump loop
+      this._addNotification(null, 'Error', 'error', 15, 'tc', (
+        <JumpTresholdExceeded 
+          message={`Code exceeded jump threshold ${JUMP_TRESHOLD} jumps!`} 
+          text={"Code execution has been stopped, because infinite jump loop can occur!"}
+        />
+      )) 
+      return
+    }
+    //run successful
+    this._clearNotifications()
+    this._addNotification(null, "Run succesful")
+
     this.props.updateCpuState(this.arrState[0])
-    // this.arrState.forEach((state) => {
-     // console.log(state.toJS())
-    // })
   }
 
   nextState(){

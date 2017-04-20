@@ -30,17 +30,17 @@ export function decode(instruction, registers, ui){
   ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
 export function execute(instruction, registers, ui){
-  ui.addTo('mov executed', 'state_line_msg')
+  ui.addTo('MOV instruction has passed through exectuion stage', 'state_line_msg')
 }
-export function memaccess(instruction, registers, ui){
-  ui.addTo('MOV memaccess', 'state_line_msg')
-}
-export function writeback(instruction, registers, ui, memory){
+export function memaccess(instruction, registers, ui, pipeline, memory){
   const mem_index = Number(instruction.params[FIRST_OPERAND])
   const value = Number(instruction.params[SECOND_OPERAND])
   memory[mem_index] = value
-  // log, mem ui
-  ui.addTo(`MOV has written ${value} into memory index ${mem_index}`, 'state_line_msg')
+  ui.addTo(`MOV instruction has written ${value} into memory index ${mem_index}`, 'state_line_msg')
+  ui.addTo(ui_template.memRegChange(mem_index), 'mem_changes')
+}
+export function writeback(instruction, registers, ui){
+  ui.addTo(`MOV instruction has just passed through writeback stage`, 'state_line_msg')
   ui.addTo(ui_template.memRegChange(mem_index), 'mem_changes')
 }
 

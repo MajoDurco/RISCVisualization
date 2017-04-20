@@ -29,29 +29,27 @@ export function fetch(instruction, registers, ui){
 export function decode(instruction, registers, ui){
 	ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
-export function execute(instruction, registers, ui){
-  // checkt for lock if param is register
-  if(numberCheck(instruction.params[FIRST_OPERAND]) === false) // REGISTER
-    dataHazzardOccur(ui, registers[instruction.params[FIRST_OPERAND]])
-	// log
-	ui.addTo(`Jump destination computed`, 'state_line_msg')
-}
-export function memaccess(instruction, registers, ui){
-	ui.addTo(ui_template.memaccess_template(instruction.instruction, false), 'state_line_msg')
-}
-// TODO check if jump execution is here and also where destination is checked
-export function writeback(instruction, registers, ui){
+export function execute(instruction, registers, ui, pipeline){
   let dest = numberCheck(instruction.params[FIRST_OPERAND])
   if(dest !== false) { // LINE
-    registers.PC.value = dest
-    ui.addTo(`Jumped to ${dest} line, PC changed accordingly`, 'state_line_msg')
+    ui.addTo(`${instruction.instruction} instruction has calculated destination to be the line ${dest} `, 'state_line_msg')
   }
   else { // REGISTER
+    dataHazzardOccur(ui, registers, instruction.params[FIRST_OPERAND])
     dest = registers[instruction.params[FIRST_OPERAND]].value
-    registers.PC.value = dest
-    ui.addTo(`Jumped to ${dest} line from ${instruction.params[FIRST_OPERAND]} register, PC changed accordingly`, 'state_line_msg')
+    ui.addTo(`${instruction.instruction} instruction has calculated destination from ${instruction.params[FIRST_OPERAND]} register to be the line ${dest}`, 'state_line_msg')
   } 
+  pipeline.stacks.jump_stack.push(dest)
+}
+export function memaccess(instruction, registers, ui, pipeline){
+  const dest = pipeline.stacks.jump_stack[0]
+	ui.addTo(`${instruction.instruction} instruction will jump to ${dest} line`, 'state_line_msg')
+}
+export function writeback(instruction, registers, ui, pipeline){
+  const dest = pipeline.stacks.jump_stack.shift()
+  registers.PC.value = dest
 	ui.addTo(ui_template.memRegChange('PC'), 'reg_changes')
+  ui.addTo(`${instruction.instruction} has jumped to line ${dest}, which PC register contains`, 'state_line_msg')
 }
 
 export default {

@@ -26,22 +26,27 @@ export function decode(instruction, registers, ui){
 	ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
 export function execute(instruction, registers, ui){
-	ui.addTo(`Execution of LOAD`, 'state_line_msg')
-  // lock
-	registers[instruction.params[FIRST_OPERAND]].lock = true
+  // lock destination register 
+	registers[instruction.params[FIRST_OPERAND]].lock += 1
+
+	ui.addTo(`LOAD instruction has computed source memory index address`, 'state_line_msg')
 }
-export function memaccess(instruction, registers, ui){
-	ui.addTo(ui_template.memaccess_template(instruction.instruction, true), 'state_line_msg')
-}
-export function writeback(instruction, registers, ui, memory){
-	const reg_name = registers[instruction.params[FIRST_OPERAND]]
+export function memaccess(instruction, registers, ui, pipeline, memory){
   const mem_index = Number(instruction.params[SECOND_OPERAND])
+
+  pipeline.stacks.mem_access_stack.push(memory[mem_index]) // push memory value into stack
+	ui.addTo(`LOAD has loaded ${memory[mem_index]} value from memory index ${mem_index}`, 'state_line_msg')
+}
+export function writeback(instruction, registers, ui, pipeline, memory){
+  const mem_index = Number(instruction.params[SECOND_OPERAND])
+	const reg_name = instruction.params[FIRST_OPERAND]
+  const result = pipeline.stacks.mem_access_stack.shift()
   // assign 
-	registers[instruction.params[FIRST_OPERAND]].value = memory[mem_index]
-  // unlock
-	registers[instruction.params[FIRST_OPERAND]].lock = false
+	registers[instruction.params[FIRST_OPERAND]].value = result
+  // unlock destination register 
+	registers[instruction.params[FIRST_OPERAND]].lock -= 1
   // log, ui
-	ui.addTo(`LOAD has written ${memory[mem_index]} value from memory index of ${mem_index} into register ${reg_name}`, 'state_line_msg')
+	ui.addTo(`LOAD has written ${memory[mem_index]} value into the ${reg_name} register`, 'state_line_msg')
 	ui.addTo(ui_template.memRegChange(instruction.params[FIRST_OPERAND]), 'reg_changes')
 }
 

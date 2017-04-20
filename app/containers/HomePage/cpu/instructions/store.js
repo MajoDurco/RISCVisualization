@@ -25,22 +25,25 @@ export function fetch(instruction, registers, ui){
 export function decode(instruction, registers, ui){
 	ui.addTo(ui_template.decode_template(instruction.instruction), 'state_line_msg')
 }
-export function execute(instruction, registers, ui){
-	dataHazzardOccur(ui, registers[instruction.params[SECOND_OPERAND]])
-	ui.addTo(`Execution of STORE`, 'state_line_msg')
-}
-export function memaccess(instruction, registers, ui){
-	ui.addTo(ui_template.memaccess_template(instruction.instruction, true), 'state_line_msg')
-}
-export function writeback(instruction, registers, ui, memory){
-  const mem_index = Number(instruction.params[FIRST_OPERAND])
+export function execute(instruction, registers, ui, pipeline){
 	const reg_name = registers[instruction.params[SECOND_OPERAND]]
   const reg_value = reg_name.value
-  // assign 
-  memory[mem_index] = reg_value
-  // log, ui
-	ui.addTo(`STORE has written ${reg_value} from ${reg_name} into memory index of ${mem_index}`, 'state_line_msg')
+
+  pipeline.stacks.mem_access_stack.push(reg_value) // push result into stack
+	dataHazzardOccur(ui, registers, instruction.params[SECOND_OPERAND])
+	ui.addTo(`STORE instruction has got value from the ${instruction.params[SECOND_OPERAND]} register`, 'state_line_msg')
+}
+export function memaccess(instruction, registers, ui, pipeline, memory){
+	const reg_name = instruction.params[SECOND_OPERAND]
+  const mem_index = Number(instruction.params[FIRST_OPERAND])
+  const result = pipeline.stacks.mem_access_stack.shift()
+  memory[mem_index] = result
+
+	ui.addTo(`STORE instruction has written ${result} from the ${reg_name} register into memory index ${mem_index}`, 'state_line_msg')
   ui.addTo(ui_template.memRegChange(mem_index), 'mem_changes')
+}
+export function writeback(instruction, registers, ui){
+	ui.addTo(`STORE instruction has just passed through writeback stage`, 'state_line_msg')
 }
 
 export default {

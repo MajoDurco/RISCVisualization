@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 
-import { INITVAL, ENDVAL, INIT_STATE, EMPTY } from '../constants'
+import { INITVAL, ENDVAL, INIT_STATE, EMPTY, JUMP_TRESHOLD } from '../constants'
 import instCode from './instructions/index'
 import { memRegChange } from './ui_templates'
 
@@ -14,23 +14,25 @@ export default function cpu(instructions){
   const ui = UserInterface()
   let memory = INIT_STATE.get('memory').toJS() //[0,0....0].length === 32 console.log(memory)
 
-  const jumps_treshold = 1000
   let PC_jumps = {}
 
   let allStates = []
 
   registers.R2.value = 2 // TODO REMOVE
   registers.R3.value = 4 // TODO REMOVE
+	ui.addTo(`Initial state, program has run succesfully`, 'state_line_msg')
   while (true){
     let should_inc_PC;
     try {
       should_inc_PC = nextStep(instructions, registers, pipeline, ui, memory) 
-      if(!should_inc_PC)// only when jumping
-        handleMaxJumps(PC_jumps, jumps_treshold, registers)
+      if(!should_inc_PC){ // only when jumping
+        const exceeded = handleMaxJumps(PC_jumps, registers)
+        if(exceeded)
+          return null
+      }
     }
     catch (err) { // runtime error
       runtimeErrHandler(ui, err)
-      console.error("RUNTIME ERROR!!!", err)
       break
     }
     if(!should_inc_PC){ // only when jumping, check if jump destination is not EMPTY line, if so skip this and dont need to push this state
@@ -52,6 +54,7 @@ export default function cpu(instructions){
     if(!should_continue)
       break
   }
+	ui.addTo(`You've reached the last state`, 'state_line_msg')
   allStates.push(Immutable.fromJS({ 
     pipe: pipeline.pipeline_state.pipe,
     registers,
@@ -71,15 +74,26 @@ function Pipeline(){
     // fetch, decode, execute, memory access, write back
     pipe: INIT_STATE.get('pipe').toJS()
   }
+  let stacks = {
+    execute_stack: [],
+    mem_access_stack: [],
+    jump_stack: [],
+    branch_stack: []
+  }
+
   return {
     init(){
       pipeline_state.pipe.fill(INITVAL)
+      for(let stack in stacks){
+       stacks[stack] = []
+      }
     },
     pushInstructionIn(instruction){
       pipeline_state.pipe.pop()
       pipeline_state.pipe.unshift(instruction)
     },
-    pipeline_state
+    pipeline_state,
+    stacks
   }
 }
 
@@ -89,6 +103,15 @@ function Pipeline(){
  */
 function Registers(){
   return INIT_STATE.get('registers').toJS()
+}
+
+/*
+ * @desc initialize lock value to zero for each register
+ */
+function initRegisterLock(registers){
+  for(let register in registers){
+    registers[register].lock = 0
+  }
 }
 
 /*
@@ -108,14 +131,14 @@ function nextStep(instructions, registers, pipeline, ui, memory){
     if(instruction !== INITVAL && instruction !== ENDVAL && instruction !== EMPTY) {
       const inst_functions = instCode[instruction.instruction]
       const functions = [inst_functions.fetch, inst_functions.decode, inst_functions.execute, inst_functions.memaccess, inst_functions.writeback]
-      if (index === 4) { // writeback
+      if (index === 4){ // writeback
         if(['BEQ', 'BNE', 'BLT', 'BGT', 'JMP'].find((instr) => instr === instruction.instruction))
           should_inc_PC = handleJumps(instruction, instructions.length, registers, pipeline, ui, memory, functions[index])
         else
-          functions[index](instruction, registers, ui, memory) // not jump instruction
+          functions[index](instruction, registers, ui, pipeline, memory) // not jump instruction
       }
       else
-        functions[index](instruction, registers, ui, memory) // not writeback
+        functions[index](instruction, registers, ui, pipeline, memory) // not writeback
     }
   })
   return should_inc_PC
@@ -136,7 +159,7 @@ function nextStep(instructions, registers, pipeline, ui, memory){
  */
 function handleJumps(instruction, instructions_len, registers, pipeline, ui, memory, exec_function){
   let should_inc_PC = true
-  const jumpExecute = exec_function(instruction, registers, ui, memory) // execute jump and move PC
+  const jumpExecute = exec_function(instruction, registers, ui, pipeline, memory) // execute jump and move PC
   if(instruction.instruction === "JMP"){
     //check if jump destination is correct
     if(registers.PC.value >= instructions_len || registers.PC.value <= 0)
@@ -144,6 +167,7 @@ function handleJumps(instruction, instructions_len, registers, pipeline, ui, mem
     should_inc_PC = false
     ui.removeAllFromStateLineExceptLast() // remove all mesages except jump one
     pipeline.init()
+    initRegisterLock(registers)
   }
   else { // branch jumps
     if(jumpExecute === true) {  // branch condition is true
@@ -152,6 +176,7 @@ function handleJumps(instruction, instructions_len, registers, pipeline, ui, mem
       should_inc_PC = false
       ui.removeAllFromStateLineExceptLast() // remove all mesages except jump one
       pipeline.init()
+      initRegisterLock(registers)
     }
   }
   return should_inc_PC
@@ -270,11 +295,10 @@ function runtimeErrHandler(ui, message){
  * @desc - need to handle infinite loop caused by jumps by my own do not let browser say a word,
  *   for each PC destination value has own counter and if the counter reach the threshold stop the execution
  * @param {{PC_value: counter<Number>}} PC_jumps - object where each PC has own jump counter
- * @param {Number} jumps_treshold - max jumps on the same destination, if reached stop program
+ * @param {Number} JUMP_TRESHOLD - max jumps on the same destination, if reached stop program
  * @param {Object} registers - ref to Registers object
- * @throws {String} - when jump threshold is exceeded
  */
-function handleMaxJumps(PC_jumps, jumps_treshold, registers){
+function handleMaxJumps(PC_jumps, registers){
   const PC = registers.PC.value
   if(PC in PC_jumps){ // jump was executed in past to the same destination
     PC_jumps[PC] += 1
@@ -283,7 +307,8 @@ function handleMaxJumps(PC_jumps, jumps_treshold, registers){
     PC_jumps[PC] = 1
   }
   for(let jump_counter in PC_jumps){
-    if(PC_jumps[jump_counter] >= jumps_treshold)
-      throw(`Jump exceeded ${jumps_treshold} jump threshold!`)
+    if(PC_jumps[jump_counter] >= JUMP_TRESHOLD)
+      return `Jump exceeded ${JUMP_TRESHOLD} jump threshold!`
   }
+  return false
 }
