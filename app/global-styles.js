@@ -3,7 +3,7 @@ import { injectGlobal } from 'styled-components';
 /* eslint no-unused-expressions: 0 */
 injectGlobal`
   body {
-    font-family: 'Roboto' , Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family: Roboto , Helvetica Neue, Helvetica, Arial, sans-serif;
 		box-sizing: border-box;
   }
 
@@ -13,15 +13,6 @@ injectGlobal`
 	}
 
   .editor{
-    @media (max-width: 1100px) {
-     width: 800px !important;
-    };
-    @media (max-width: 600px) {
-     width: 350px !important;
-    };
-    @media (max-width: 400px) {
-     width: 300px !important;
-    };
-    width: 450px !important;
+    width: 95% !important;
   }
 `;

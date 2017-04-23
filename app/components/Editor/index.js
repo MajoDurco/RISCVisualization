@@ -45,7 +45,7 @@ class Editor extends React.Component {
           >
             <MenuItem 
               value={'default'}
-              primaryText='Choose Example Code' 
+              primaryText='Choose Code' 
             />
             <MenuItem 
               value={'simple'}

@@ -1,0 +1,18 @@
+exports[`test nav renders correctly 1`] = `
+<div
+  className="dVZZbp">
+  <a
+    className="fgURVR"
+    onClick={[Function]}
+    style={Object {}}>
+    <img
+      className="jaiOvz"
+      src="IMAGE_MOCK" />
+    <h1
+      className="jbaQLL"
+      size={undefined}>
+      RISC Visualization Tool
+    </h1>
+  </a>
+</div>
+`;

@@ -16,7 +16,6 @@ const initial_cpu_state = INIT_STATE
 function cpuReducer(state = initial_cpu_state, action) {
   switch (action.type) {
 		case UPDATE_CPU_STATE:
-      console.log("UPDATING CPU STATE")
 			return action.cpu_state
     default:
       return state;
@@ -45,7 +44,6 @@ const initial_state_line = fromJS({
 function stateLine(state = initial_state_line, action){
 	switch (action.type) {
 		case SET_STATE_LINE_INDEX:
-      console.log("SETTING LINE INDEX")
 			return state.set('activeIndex', action.index)
 		default:
 			return state

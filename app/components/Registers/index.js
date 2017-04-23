@@ -10,6 +10,7 @@ import HoverDiv from '../HoverDiv/index'
 
 const RegDiv = styled.div`
   cursor: ${props => props.hover ? 'pointer' : 'default'};
+  margin-right: 15px;
 
   & > div:last-child {
     display: none; 

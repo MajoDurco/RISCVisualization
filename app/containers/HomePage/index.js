@@ -124,14 +124,14 @@ export class HomePage extends React.PureComponent {
       <NotificationSystem ref="notificationSystem" />
       <div>
         <Row>
-          <ColumnNoPadding md={5} lg={3}>
+          <ColumnNoPadding xs={11} sm={11} md={5} lg={3}>
             <Editor 
               run={this.run.bind(this)} 
               code_sample={this.props.codeSample}
               code_sample_change={(value) => this.props.codeSampleChanged(value)}
             />
           </ColumnNoPadding>
-          <Column md={7} lg={9}>
+          <Column xs={12} sm={12} md={7} lg={9}>
             <Row>
               <ColumnNoPadding>
                 <Pipeline 

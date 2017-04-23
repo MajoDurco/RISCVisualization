@@ -17,12 +17,14 @@ const Navig = styled.div`
 		width: 50px;
 
 		${media.tablet`
-			height: 35px;
-			width: 35px;
+			height: 40px;
+			width: 45px;
+      font-size: 20px;
 		`}
 		${media.phone`
-			height: 25px;
-			width: 25px;
+			height: 35px;
+			width: 35px;
+      font-size: 15px;
 		`}
 	}
 `

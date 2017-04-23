@@ -44,12 +44,20 @@ const Two = styled.span`
 const Three = styled.span`
   color: #0f2bdd;
 `
+const InstructionText = styled.span`
+  @media (max-width: ${LOW_RESOLUTION}){
+    display: none;
+  }
+`
 
 class InstructionDiv extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
+    const instruction_text = 'Instructions'
     return (
       <InstructionContainer>
-        <span>Instructions</span>
+        <InstructionText>
+          Instructions 
+        </InstructionText>
         <Info />
         <HidenDiv>
           <Bubble width={"450px"} height={"500px"} left={380}>
