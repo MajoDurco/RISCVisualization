@@ -1,4 +1,4 @@
-exports[`test nav renders correctly 1`] = `
+exports[`test Navigation bar snapshot 1`] = `
 <div
   className="dVZZbp">
   <a
