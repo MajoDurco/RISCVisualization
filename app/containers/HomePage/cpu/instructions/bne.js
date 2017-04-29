@@ -45,7 +45,7 @@ export function execute(instruction, registers, ui, pipeline){
   if(is_jumping){
     if(!dest) { // REGISTER
       dataHazzardOccur(ui, registers, instruction.params[THIRD_OPERAND])
-      dest = registers[instruction.params[FIRST_OPERAND]].value
+      dest = registers[instruction.params[THIRD_OPERAND]].value
     }
     ui.addTo(`${instruction.instruction} instruction has calculated that ${instruction.params[FIRST_OPERAND]}(${first_op}) is not equal with ${instruction.params[SECOND_OPERAND]}(${second_op}) so jump is going to be executed in next stage to  line ${dest}`, 'state_line_msg')
     pipeline.stacks.branch_stack.push(dest)

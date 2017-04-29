@@ -48,12 +48,24 @@ class Editor extends React.Component {
               primaryText='Choose Code' 
             />
             <MenuItem 
-              value={'simple'}
-              primaryText='Simple'
+              value={'arithmetic'}
+              primaryText='Arithmetic Instr.'
             />
             <MenuItem 
-              value={'empty'}
-              primaryText='Empty'
+              value={'jumps'}
+              primaryText='Jump & Branch Instr.'
+            />
+            <MenuItem 
+              value={'hazzard'}
+              primaryText='Data hazzard example'
+            />
+            <MenuItem 
+              value={'jump_loop'}
+              primaryText='Jump infinite loop'
+            />
+            <MenuItem 
+              value={'runtime_err'}
+              primaryText='Runtime error'
             />
           </DropDownMenu>
           <InstructionDiv />

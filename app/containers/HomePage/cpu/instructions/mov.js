@@ -40,6 +40,7 @@ export function memaccess(instruction, registers, ui, pipeline, memory){
   ui.addTo(ui_template.memRegChange(mem_index), 'mem_changes')
 }
 export function writeback(instruction, registers, ui){
+  const mem_index = Number(instruction.params[FIRST_OPERAND])
   ui.addTo(`MOV instruction has just passed through writeback stage`, 'state_line_msg')
   ui.addTo(ui_template.memRegChange(mem_index), 'mem_changes')
 }

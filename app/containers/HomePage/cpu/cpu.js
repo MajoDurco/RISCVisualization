@@ -1,4 +1,6 @@
+import React from 'react'
 import Immutable from 'immutable'
+import Warn from 'material-ui/svg-icons/action/report-problem'
 
 import { INITVAL, ENDVAL, INIT_STATE, EMPTY, JUMP_TRESHOLD } from '../constants'
 import instCode from './instructions/index'
@@ -18,8 +20,6 @@ export default function cpu(instructions){
 
   let allStates = []
 
-  registers.R2.value = 2 // TODO REMOVE
-  registers.R3.value = 4 // TODO REMOVE
 	ui.addTo(`Initial state, program has run succesfully`, 'state_line_msg')
   while (true){
     let should_inc_PC;
@@ -288,7 +288,13 @@ function UserInterface(){
  */
 function runtimeErrHandler(ui, message){
   ui.clearSpecificUiMember('state_line_msg')
-	ui.addTo(`Runtime Error Occured: ${message}`, 'state_line_msg')
+	ui.addTo(
+      <span>
+        <Warn color="red" />
+        {` Runtime Error Occured ${message} `}
+        <Warn color="red" />
+      </span>
+  , 'state_line_msg')
 }
 
 /*
