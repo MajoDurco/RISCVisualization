@@ -67,6 +67,10 @@ class Editor extends React.Component {
               value={'runtime_err'}
               primaryText='Runtime error'
             />
+            <MenuItem 
+              value={'empty'}
+              primaryText='Empty editor'
+            />
           </DropDownMenu>
           <InstructionDiv />
         </EditorHeader>

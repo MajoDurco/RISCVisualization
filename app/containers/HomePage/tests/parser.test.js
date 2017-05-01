@@ -1,91 +1,139 @@
-import {
-	parse,
-	isEmpty,
-	verifyInstructions,
-} from '../parser'
+import getInstructions, * as parser from '../parser'
 
-import getInstructions from '../parser'
+describe("GetInstructions function", () => {
 
-/*
- * getInstructions
- */
-test('valid instructions', () => {
-	const instruction = "add 1 2 3"
-	expect(() => {getInstructions(instruction)}).not.toThrow()
+  it('Shoudn\'t take empty instructions', () => {
+    expect(getInstructions("")).toHaveProperty('valid', false)
+  })
+
+  it('non valid instructions', () => {
+    expect(getInstructions("foo")).toHaveProperty('valid', false)
+  })
+
+  it('Only comments is not valid', () => {
+    expect(getInstructions("#foo")).toHaveProperty('valid', false)
+  })
+
+  it('Multiple comments is not valid', () => {
+    expect(getInstructions(`#foo
+    
+    #heheheh`)).toHaveProperty('valid', false)
+  })
+
+  it('Validate correct instructions', () => {
+    const instruction = `add R1 R2 R3`
+    const lines = instruction.split('\n').length + 1 // plus empty zero line
+    const parsed = getInstructions(instruction)
+    expect(parsed).toHaveLength(lines)
+  })
+
+  it('Validate correct instructions with empty lines', () => {
+    const instruction = `add R1 R2 R3
+    
+    NOP`
+    const lines = instruction.split('\n').length + 1 // plus empty zero line
+    const parsed = getInstructions(instruction)
+    expect(parsed).toHaveLength(lines)
+  })
 })
 
-test('empty instructions', () => {
-	expect(() => {getInstructions("")}).toThrow()
+describe("parse function", () => {
+  const parse_variants = [
+    ["ADD 1 2 3", "ADD", ["1", "2", "3"]],
+    ["XXX e 2 3", "XXX", ["e", "2", "3"]],
+    ["a b c", "A", ["b", "c"]],
+    [`add 1 2 3
+    `, "ADD", ["1", "2", "3"]], ["       XX", "XX", []],
+  ]
+
+  parse_variants.forEach((element) => {
+    it(`test parse function with ${element[0]}`, () => {
+      expect(parser.parse(element[0])).toEqual([{instruction: element[1], params: element[2]}])
+    })
+  })
+
+  it('test null with empty text', () => {
+    expect(parser.parse("")).toBeNull()
+  })
 })
 
-test('non valid instructions', () => {
-	expect(() => {getInstructions("foo")}).toThrow()
+describe("verifyInstructions function", () => {
+  const three_reg = ["R1", "R2", "R3"]
+  const three_reg_instructions = ["ADD", "AND", "BEQ", "BGT", "BLT", "BNE", "NOR", "OR", "SHIFTL", "SHIFTR", "SUB", "XOR"]
+
+  it("check with 3reg instruction valid rules", () => {
+    const result = three_reg_instructions.reduce((rest, instruction_name) => {
+      return [...rest, ...[{
+          instruction: instruction_name,
+          params: three_reg
+        }]
+      ]
+    }, [])
+    expect(parser.verifyInstructions(result)).toHaveProperty('valid', true)
+  })
+
+  it('Should be valid also with lowercase 3reg instructions', () => {
+    const lower_instructions = three_reg_instructions.map(instruction_name => instruction_name.toLowerCase())
+    const result = lower_instructions.reduce((rest, instruction_name) => {
+      return [...rest, ...[{
+          instruction: instruction_name,
+          params: three_reg
+        }]
+      ]
+    }, [])
+    expect(parser.verifyInstructions(result)).toHaveProperty('valid', true)
+  })
+
+  it("Should be not valid with wrong instructions ", () => {
+    const invalid_instruction = [
+      {
+        instruction: "foo",
+        params: three_reg
+      }
+    ]
+    expect(parser.verifyInstructions(invalid_instruction)).toHaveProperty('valid', false)
+  })
+})
+ 
+describe("isEmpty function", () => {
+  it("normal string", () => {
+    expect(parser.isEmpty("foo")).toBeFalsy()
+  })
+
+  it("empty string", () => {
+    expect(parser.isEmpty("")).toBeTruthy()
+  })
+
+  it("white chars", () => {
+    expect(parser.isEmpty("	         ")).toBeTruthy()
+  })
+
+  it("non string", () => {
+    expect(() => parser.isEmpty(1)).toThrow()
+  })
 })
 
-/*
- * parse
- */
-const parse_variants = [
-	["ADD 1 2 3", "ADD", ["1", "2", "3"]],
-	["XXX e 2 3", "XXX", ["e", "2", "3"]],
-	["a b c", "A", ["b", "c"]],
-	[`add 1 2 3${'\n'}`, "ADD", ["1", "2", "3"]],
-	["       XX", "XX", []],
-]
+describe("removeComments", () => {
+  it("Should replace new line comments with empty lines", () => {
+    const comment_line = `# this is comment`
+    expect(parser.removeComments(comment_line)).toBe('')
+  })
 
-parse_variants.forEach((element) => {
-	test(`test parse function with ${element[0]}`, () => {
-		expect(parse(element[0])).toEqual([{instruction: element[1], params: element[2]}])
-	})
-})
+  it("Shouldn't replace nothing", () => {
+    const comment_line = `ADD R1 R2 R3`
+    expect(parser.removeComments(comment_line)).toBe(comment_line)
+  })
 
-test('test null with empty text', () => {
-	expect(parse("")).toBeNull()
-})
+  it("Should remove comment from end of the line", () => {
+    const comment = `#comment`
+    const command = `ADD R1 R2 R3`
+    expect(parser.removeComments(command + comment)).toBe(command)
+  })
 
-/*
- * isEmpty
- */
-test("normal string", () => {
-	expect(isEmpty("foo")).toBeFalsy()
-})
-
-test("empty string", () => {
-	expect(isEmpty("")).toBeTruthy()
-})
-
-test("white chars", () => {
-	expect(isEmpty("	         ")).toBeTruthy()
-})
-
-test("non string", () => {
-	expect(() => {
-		isEmpty(1)
-	}).toThrow()
-})
-
-/*
- * verifyInstructions
- */
-test("check with valid rules", () => {
-	let valid_instruction = [
-		{
-			instruction: "ADD",
-			params: ["x", "y", "z"]
-		}
-	]
-	expect(verifyInstructions(valid_instruction)).toBeTruthy()
-
-	valid_instruction[0].instruction.toLowerCase()
-	expect(verifyInstructions(valid_instruction)).toBeTruthy()
-})
-
-test("check with non valid rules", () => {
-	const invalid_instruction = [
-		{
-			instruction: "foo",
-			params: ["x", "y", "z"]
-		}
-	]
-	expect(verifyInstructions(invalid_instruction)).toBeFalsy()
+  it("Test multiple comments on one line", () => {
+    const comment = `#comment`
+    const command = `ADD R1 R2 R3 `
+    expect(parser.removeComments(command + comment + comment)).toBe(command)
+    expect(parser.removeComments(`${comment} foo boo ${comment}`)).toBe('')
+  })
 })

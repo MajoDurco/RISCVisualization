@@ -10,7 +10,7 @@ import {
 export function updateCpuState(cpu_state){
 	return {
 		type: UPDATE_CPU_STATE,
-		cpu_state: cpu_state,
+		cpu_state
 	}
 }
 
@@ -30,9 +30,9 @@ export function openMemoryDrawer(open){
 
 export function AnimationOn(on){
   if(on)
-	return {type: ANIMATION_ON_TRUE}
+    return {type: ANIMATION_ON_TRUE}
   else
-	return {type: ANIMATION_ON_FALSE}
+    return {type: ANIMATION_ON_FALSE}
 }
 
 export function codeSampleChanged(value){

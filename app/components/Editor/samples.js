@@ -2,7 +2,7 @@ const arithmetic = `MOV 0 1
 MOV 1 5
 LOAD R1 0
 LOAD R2 1
-NOP
+NOP # need wait for R2 value
 NOP
 ADD R3 R1 R2
 SUB R4 R1 R2
@@ -17,7 +17,7 @@ const jumps = `MOV 0 5
 MOV 1 9
 LOAD R1 0
 LOAD R2 1
-JMP 7
+JMP 7 # jump to line 7
 
 STORE 3 R3
 BNE R1 R2 R2
@@ -29,16 +29,16 @@ const hazzard = `MOV 0 5
 MOV 1 9
 LOAD R1 0
 LOAD R2 1
-ADD R3 R1 R2`
+ADD R3 R1 R2 # registers have their old values`
 
 const jump_loop = `NOP
-JMP 1`
+JMP 1 # infinite loop with jump`
 
 const runtime_err = `MOV 0 -1
 LOAD R1 0
 NOP
 NOP
-JMP R1`
+JMP R1 # invalid line number in R1`
 
 export default {
   default: '', // don't remove

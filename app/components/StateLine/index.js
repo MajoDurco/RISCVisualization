@@ -43,10 +43,13 @@ class StateLine extends React.Component {
 
   render() {
 		let buttons;
+    let stateline_text = ""
 		if(this.props.states != null) { // if initialized
 			const next_disable = this.props.activeIndex === (this.props.states.length-1) ? true : false
 			const prev_disable = this.props.activeIndex === 0 ? true : false
 			const indexes = _.range(this.props.states.length) // create array long as states.length
+      stateline_text = this.renderText()
+
 			const steps = indexes.map((index) => {
 				return (
 					<Step key={index}>
@@ -80,8 +83,10 @@ class StateLine extends React.Component {
         </div>
 			)
 	}
-	else 
+  else {
     buttons = <NotInitStatement>Run the Visualization to see all possible states!</NotInitStatement>
+    stateline_text = ""
+  }
 
 	return (
 		<div>
@@ -91,7 +96,7 @@ class StateLine extends React.Component {
       />
 			{buttons}
       <StateText>
-        {this.renderText()}
+        {stateline_text}
       </StateText>
 		</div>
     )

@@ -69,6 +69,7 @@ export class HomePage extends React.PureComponent {
           text={"Code execution has been stopped, because infinite jump loop can occur!"}
         />
       )) 
+      this.props.updateCpuState(this.arrState[0])
       return
     }
     //run successful
@@ -117,8 +118,6 @@ export class HomePage extends React.PureComponent {
   }
 
   render() {
-    console.log("HomePage", this)
-    this.open = this.props.animation.get('open')
     return (
     <div>
       <NotificationSystem ref="notificationSystem" />

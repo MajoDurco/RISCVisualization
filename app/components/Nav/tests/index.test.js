@@ -3,7 +3,7 @@ import renderer from 'react-test-renderer'
 
 import Nav from '../index'
 
-it('Navigation bar snapshot', () => {
+it('Snapshot navigation bar', () => {
   const navigation_bar = renderer.create(
     <Nav />
   ).toJSON();

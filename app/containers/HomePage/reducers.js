@@ -13,7 +13,7 @@ import {
 
 const initial_cpu_state = INIT_STATE
 
-function cpuReducer(state = initial_cpu_state, action) {
+export function cpuReducer(state = initial_cpu_state, action) {
   switch (action.type) {
 		case UPDATE_CPU_STATE:
 			return action.cpu_state
@@ -26,7 +26,7 @@ const initial_animation_state = fromJS({
   on: false
 })
 
-function animation(state = initial_animation_state, action){
+export function animation(state = initial_animation_state, action){
 	switch (action.type) {
 		case ANIMATION_ON_FALSE:
 			return state.set('on', false)
@@ -41,7 +41,7 @@ const initial_state_line = fromJS({
   activeIndex: 0  // statline not initialized
 })
 
-function stateLine(state = initial_state_line, action){
+export function stateLine(state = initial_state_line, action){
 	switch (action.type) {
 		case SET_STATE_LINE_INDEX:
 			return state.set('activeIndex', action.index)
@@ -54,7 +54,7 @@ const initial_memory_state = fromJS({
 	drawerOpen: false
 })
 
-function memoryTab(state = initial_memory_state, action) {
+export function memoryTab(state = initial_memory_state, action) {
 	switch (action.type) {
 		case SET_OPEN_MEM_DRAWER:
 			return state.set('drawerOpen', action.open)
@@ -67,7 +67,7 @@ const initial_editor_state = fromJS({
 	code_sample: 'default'
 })
 
-function editor(state= initial_editor_state, action){
+export function editor(state= initial_editor_state, action){
   switch (action.type){
     case CODE_SAMPLE_CHANGED:
       return state.set('code_sample', action.value)

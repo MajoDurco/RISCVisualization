@@ -27,8 +27,9 @@ export default function cpu(instructions){
       should_inc_PC = nextStep(instructions, registers, pipeline, ui, memory) 
       if(!should_inc_PC){ // only when jumping
         const exceeded = handleMaxJumps(PC_jumps, registers)
-        if(exceeded)
+        if(exceeded){
           return null
+        }
       }
     }
     catch (err) { // runtime error

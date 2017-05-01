@@ -3,13 +3,12 @@ import spec_instructions from './cpu/instructions/index'
 
 export default function getInstructions(text){
 		const parsed_instructions = parse(text)
-		if (parsed_instructions === null)
+		if (parsed_instructions === null || checkOnlyEmptyLines(parsed_instructions))
 			return {valid: false, annotations:[{text: `Insert Instructions`}]}
 		let verify = verifyInstructions(parsed_instructions)
 		if(!verify.valid)
 			return verify
 		parsed_instructions.unshift(EMPTY) // add empty element to the beginning to have each instruction on the same index as on line in editor
-    console.log(parsed_instructions)
 		return parsed_instructions
 }
 
@@ -17,7 +16,7 @@ export default function getInstructions(text){
  * @param {text} text from ace editor
  * @return {null/instructions}
  * 	 null - param text is empty,
- * 	 insttructions - Array of instructions
+ * 	 instructions - Array of instructions
  *  {instruction: String, params: String[]}[] 
  */
 export function parse(text){
@@ -28,6 +27,8 @@ export function parse(text){
       let parsed = []
       // remove empty lines from beginning/end and split them at new line
       text.trim().split('\n').map((line) => { 
+        const removed_comment = removeComments(line)
+        line = removed_comment
 				if(!isEmpty(line)) // ignore empty lines
 				{
 					let space_splited = line.split(' ')
@@ -100,4 +101,17 @@ export function isEmpty(str){
 		throw TypeError("isEmpty takes string as parameter not " + typeof(str))
 	const zero_length = 0
 	return (str.length === zero_length || !str.trim())
+}
+
+/*
+ * @desc removes comment from line
+ * @param {String} line - handled line
+ * @return {String} - line without comment, or unchanged when comment wasn't there
+ */
+export function removeComments(line){
+  return line.replace(/#.*$/g, '')
+}
+
+export function checkOnlyEmptyLines(parsed_text){
+  return parsed_text.every(line => line === EMPTY)
 }
