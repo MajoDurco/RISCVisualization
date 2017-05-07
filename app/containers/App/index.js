@@ -5,10 +5,6 @@ import { HedronMedia } from '../../components/media'
 
 export default class App extends React.PureComponent {
 
-  static propTypes = {
-    children: React.PropTypes.node,
-  };
-
   render() {
     return (
       <HedronMedia>
@@ -19,4 +15,8 @@ export default class App extends React.PureComponent {
       </HedronMedia>
     );
   }
+}
+
+App.propTypes = {
+  children: React.PropTypes.node
 }

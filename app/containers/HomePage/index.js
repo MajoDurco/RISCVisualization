@@ -179,10 +179,20 @@ export class HomePage extends React.PureComponent {
 }
 
 HomePage.propTypes = {
+  animationOn: React.PropTypes.bool,
+  animation: React.PropTypes.object,
+  baseState: React.PropTypes.object,
+  codeSampleChanged: React.PropTypes.func,
+  codeSample: React.PropTypes.string,
+  memDrawerOpen: React.PropTypes.bool,
+  memory: React.PropTypes.array,
+  openMemoryDrawer: React.PropTypes.func,
   pipeState: React.PropTypes.object.isRequired, // Immutable
   regState: React.PropTypes.object.isRequired,
-  updateCpuState: React.PropTypes.func.isRequired,
+  setStateLineIndex: React.PropTypes.func,
+  stateLineIndex: React.PropTypes.number,
   ui: React.PropTypes.object.isRequired,
+  updateCpuState: React.PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({

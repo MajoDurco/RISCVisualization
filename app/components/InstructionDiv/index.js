@@ -52,7 +52,6 @@ const InstructionText = styled.span`
 
 class InstructionDiv extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const instruction_text = 'Instructions'
     return (
       <InstructionContainer>
         <InstructionText>

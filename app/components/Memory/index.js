@@ -56,7 +56,8 @@ class Memory extends React.Component { // eslint-disable-line react/prefer-state
 
 Memory.propTypes = {
   isOpen: React.PropTypes.bool.isRequired,
-  setOpen: React.PropTypes.func.isRequired
+  setOpen: React.PropTypes.func.isRequired,
+  children: React.PropTypes.node
 };
 
 export default Memory;
