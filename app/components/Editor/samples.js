@@ -17,12 +17,12 @@ const jumps = `MOV 0 5
 MOV 1 9
 LOAD R1 0
 LOAD R2 1
+NOP
 JMP 7 # jump to line 7
-
-STORE 3 R3
-BNE R1 R2 R2
+BNE R1 R2 R2 # jump to line 9
 BGT R2 R1 10
 BEQ R2 R1 1
+STORE 3 R3
 NOP`
 
 const hazzard = `MOV 0 5
